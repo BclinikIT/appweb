@@ -2,6 +2,9 @@
 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FormularioImcController;
+use App\Http\Controllers\FormularioImcInvitadosController;
+
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -21,4 +24,9 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
+    Route::resource('/formularioimc', FormularioImcController::class);
+    Route::resource('/formularioimcinvitados', FormularioImcInvitadosController::class);
+
+    
 });

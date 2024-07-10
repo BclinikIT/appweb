@@ -53,10 +53,10 @@ const logout = () => {
                                 </NavLink>
                             </div>
 
-                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                            <div class="hidden space-x-8 sm:-my-px  sm:flex">
                                 <div class="hidden sm:flex sm:items-center sm:ms-6">
                                     <!-- Settings Dropdown -->
-                                    <div class="ms-3 relative">
+                                    <div class="relative">
                                         <Dropdown align="right" width="48">
                                             <template #trigger>
                                                 <button v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">

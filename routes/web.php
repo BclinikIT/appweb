@@ -6,6 +6,7 @@ use App\Http\Controllers\FormularioImcController;
 use App\Http\Controllers\FormularioImcInvitadosController;
 
 use Inertia\Inertia;
+use App\Http\Controllers\ImcWebhookController;
 
 Route::get('/', function () {
     return Inertia::render('Auth/Login', [
@@ -28,5 +29,10 @@ Route::middleware([
     Route::resource('/formularioimc', FormularioImcController::class);
     Route::resource('/formularioimcinvitados', FormularioImcInvitadosController::class);
 
-    
+
 });
+
+
+
+Route::post('webhook/imc_formulario', [ImcWebhookController::class, 'handle']);
+Route::post('webhook/imc_invitacion', [ImcWebhookController::class, 'handleImcInvitacion']);

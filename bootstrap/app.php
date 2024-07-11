@@ -17,8 +17,13 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
 
+        $middleware->validateCsrfTokens(except: [
+            'webhook/imc_formulario',
+            'webhook/imc_invitacion'
+        ]);
+
         //
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+
     })->create();

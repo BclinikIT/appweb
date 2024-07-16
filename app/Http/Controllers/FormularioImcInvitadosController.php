@@ -8,7 +8,8 @@ use Illuminate\Http\Request;
 class FormularioImcInvitadosController extends Controller
 {
     public function index(){
-        $datos = FormularioImcInvitados::all();
+        $datos = FormularioImcInvitados::orderBy('fecha', 'desc')
+                                    ->orderBy('hora', 'desc')->get();
         return inertia('Formulario_imc/Lista_invitado', ['datos' => $datos]);
     }
 }

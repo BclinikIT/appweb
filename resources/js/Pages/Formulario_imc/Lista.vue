@@ -231,8 +231,6 @@ const total = ref(0);
 const hombres = ref(0);
 const mujeres = ref(0);
 
-
-
 const totalPages = computed(() => {
     const filteredData = datosFiltrados.value;
     return Math.ceil(filteredData.length / pageSize);

@@ -144,7 +144,15 @@ const logout = () => {
                             </div> -->
 
                             <!-- Settings Dropdown -->
+                             <div>
+                                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                    <NavLink :href="route('users.index')" :active="route().current('users.*')">
+                                        Usuarios
+                                    </NavLink>
+                                </div>
+                             </div>
                             <div class="ms-3 relative">
+                                
                                 <Dropdown align="right" width="48">
                                     <template #trigger>
                                         <button v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">

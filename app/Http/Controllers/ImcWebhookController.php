@@ -28,20 +28,7 @@ class ImcWebhookController extends Controller
 
             $formName = $request->input('form_name');
             $form_id = $request->input('form_id');
-            $dataToLog = [
-                'nombre' => $nombre,
-                'apellido' => $apellido,
-                'edad' => $edad,
-                'genero' => $genero,
 
-                'peso_en_libras' => $peso_en_libras,
-                'altura_en_cms' => $altura_en_centimetros,
-                'correo' => $correo,
-                'telefono' => $telefono,
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s'),
-                'form_id' => "0"
-            ];
 
 
             $peso_r = ($peso_en_libras / 2.20462);
@@ -66,9 +53,25 @@ class ImcWebhookController extends Controller
                     return "Valor IMC no válido";
                 }
             }
-
             $categoria = obtenerCategoriaIMC($result);
 
+
+            $dataToLog = [
+                'nombre' => $nombre,
+                'apellido' => $apellido,
+                'edad' => $edad,
+                'genero' => $genero,
+                'peso_en_libras' => $peso_en_libras,
+                'altura_en_cms' => $altura_en_centimetros,
+                'correo' => $correo,
+                'telefono' => $telefono,
+                'categoria' => $categoria,
+                'imc' => $result,
+                'fecha' => date('Y-m-d'),
+                'hora' => date('H:i:s'),
+                'form_id' => "0"
+
+            ];
 
 
             Imc_Formulario::create($dataToLog);

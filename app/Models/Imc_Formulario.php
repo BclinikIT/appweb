@@ -19,6 +19,8 @@ class Imc_Formulario extends Model
         'altura_en_cms',
         'correo',
         'telefono',
+        'categoria',
+        'imc',
         'fecha',
         'hora',
         'form_id'

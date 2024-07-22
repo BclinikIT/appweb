@@ -57,7 +57,7 @@ const submit = () => {
             </div> -->
 
             <div>
-                <InputLabel for="name" value="Name" />
+                <InputLabel for="name" value="Nombre de usuario" />
                 <TextInput
                     id="name"
                     v-model="form.name"
@@ -71,7 +71,7 @@ const submit = () => {
             </div>
 
             <div class="mt-4">
-                <InputLabel for="password" value="Password" />
+                <InputLabel for="password" value="Contraseña" />
                 <TextInput
                     id="password"
                     v-model="form.password"

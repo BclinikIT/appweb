@@ -3,9 +3,10 @@
         <div class="container mx-auto px-4 sm:px-8">
             <div class="py-8">
                 <h2 class="text-2xl leading-tight">Editar Usuario</h2>
+                <br>
                 <form @submit.prevent="updateUser">
                     <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="name">Nombre:</label>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="name">Nombre de usuario:</label>
                         <input type="text" id="name" v-model="form.name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                     </div>
                     <div class="mb-4">

@@ -20,6 +20,8 @@ class FormularioImc extends Model
         'altura_en_cms',
         'correo',
         'telefono',
+        'categoria',
+        'imc',
         'fecha',
         'hora',
         'form_id',
@@ -28,6 +30,6 @@ class FormularioImc extends Model
     ];
 
     protected $casts = [
-       
+
     ];
 }

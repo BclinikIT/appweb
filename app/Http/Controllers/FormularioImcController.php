@@ -8,7 +8,8 @@ use App\Models\FormularioImc;
 class FormularioImcController extends Controller
 {
     public function index(){
-        $datos = FormularioImc::all();
+        $datos = FormularioImc::orderBy('fecha', 'desc')
+                            ->orderBy('hora', 'desc')->get();
         return inertia('Formulario_imc/Lista', ['datos' => $datos]);
     }
 }

@@ -226,7 +226,6 @@ export default {
                                 <option v-for="campo in campos" :key="campo" :value="campo">{{ campo }}</option>
                             </select>
 
-
                             <!--  <div class="w-1/2">
                                 <label class="block text-sm font-medium text-gray-700">Seleccionar Medida:</label>
                                 <select v-model="medidaSeleccionada"
@@ -236,8 +235,6 @@ export default {
                             </div> -->
                         </div>
                     </div>
-
-
                     <div class="w-4/5 pl-4">
                         <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                             <div class="inline-block min-w-full shadow rounded-lg overflow-hidden">

@@ -429,6 +429,7 @@ class ImcWebhookController extends Controller
                                                                                                         <tr>
                                                                                                             <td align="left" class="esd-block-text">
                                                                                                                 <p style="line-height: 150% !important; color: #002545" align="right">Fecha: ' . date('Y-m-d') . '</p>
+                                                                                                                <p style="line-height: 150% !important; color: #002545" align="right"><a href="'. $link .'" style="display: inline-block; padding: 1px 15px; margin-left: 10px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">Descargar</a></p>
                                                                                                                 <p style="line-height: 150% !important; color: #002545" align="right"><a target="_blank">
                                                                                                                     <img
                                                                                                                         src="https://bclinik.com/imc/datos/img/imc.png"

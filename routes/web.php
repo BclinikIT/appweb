@@ -38,7 +38,7 @@ Route::middleware([
 });
 
 
-
+Route::get('webhook/imc_download', [ImcWebhookController::class, 'pdf']);
 Route::post('webhook/imc_formulario', [ImcWebhookController::class, 'handle']);
 Route::post('webhook/imc_invitacion', [ImcWebhookController::class, 'handleImcInvitacion']);
 

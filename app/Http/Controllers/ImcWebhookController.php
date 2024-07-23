@@ -8,9 +8,232 @@ use App\Models\Imc_Formulario;
 use App\Models\Imc_Invitacion;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+use PDF; // Asegúrate de importar la clase PDF
+use App\Models\FormularioImc;
+use Illuminate\Support\Facades\Crypt;
 
 class ImcWebhookController extends Controller
 {
+    public function pdf(Request $request){  
+
+        $url_img = public_path('/img/img_correos/'); 
+        // $url_img = asset('/img/img_correos/').'/'; 
+
+        $encryptedId = $request->query('id');
+        // $userId = Crypt::decryptString($encryptedId);
+        $decryptedId = Crypt::decryptString($encryptedId);
+
+        $user = FormularioImc::findOrFail($decryptedId);
+        $nombre = $user->nombre;
+        $apellido = $user->apellido;
+        $edad = $user->edad;
+        $genero = $user->genero;
+        $peso_en_libras = $user->peso_en_libras;
+        $altura_en_centimetros = $user->altura_en_cms;
+        $correo = $user->correo;
+        $telefono = $user->telefono;
+
+
+        $formName = '';
+        $form_id = $user->form_id;
+
+
+
+        $peso_r = ($peso_en_libras / 2.20462);
+        $talla = ($altura_en_centimetros / 100);
+        $tallas_r = ($talla * $talla);
+
+        $result = round((($peso_r / $tallas_r) * 10) / 10, 2);
+
+        
+        $categoria = $user->categoria;
+
+
+        $body = '<!DOCTYPE html>
+        <html lang="en">
+        
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Invitación</title>
+            <style>
+            body{
+                margin:0;
+                padding:0;
+            }
+            </style>
+        </head>
+        
+        <body>
+            <table width="100%" bgcolor="#ffffff" cellpadding="0" cellspacing="0" border="0">
+                <tbody>
+                    <tr>
+                        <td>
+                            <table>
+                                <table width="600px" cellpadding="0" cellspacing="0" border="0" align="center"
+                                    style="color: #595959;">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <img src="'.$url_img.'header.png" alt="header">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="" style="text-align: right;display: block;padding: 10px;">Fecha:
+                                                    '.date('Y-m-d').'</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <p>Hola ' . $nombre . ' ' . $apellido . '</p>
+                                                <p>Gracias por confiarnos tus datos:</p>
+                                                <p>Tu <strong>IMC</strong> es de ' . $result . ' que corresponde a la categoría ' . $categoria . '</p>
+                                                <p style="color:#11455d;text-align: center;"><em> El índice de masa corporal es la relación de tu peso con tu estatura. </em></p>
+                                                <p style="color:#11455d;text-align: center;"> <em>Es el indicador más confiable para saber si tienes sobrepeso o ya estás en obesidad.</em> </p>
+        
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center;">
+                                                <img style="width: 90%;text-align: center;margin: 0 auto;" src="'.$url_img.'imc.png"
+                                                    alt="imc">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                            <ul>
+                                                <li>
+                                                    <p>
+                                                        <em
+                                                            ><span style="color: #f1c232">​Entre 25 a 29.99</span> &nbsp;es sobrepeso
+                                                            también llamado pre obesidad.
+                                                        </em>
+                                                    </p>
+                                                </li>
+                                                <li>
+                                                    <p>
+                                                        <em
+                                                            ><span style="color: #ff9900">Entre 30 a 34.99</span> estás a tiempo de
+                                                            retroceder categorías y llegar a lo normal.
+                                                        </em>
+                                                    </p>
+                                                </li>
+                                                <li>
+                                                    <p>
+                                                        <em
+                                                            ><span style="color: #ff0000">Entre 35 a 39.99</span> estas a tiempo de
+                                                            retroceder categorías y evitar el Síndrome Metabólico.
+                                                        </em>
+                                                    </p>
+                                                </li>
+                                                <li>
+                                                    <p style="line-height: 150% !important" align="left">
+                                                        <em
+                                                            ><span style="color: #990000">Mayor de 40</span> no solo puedes retroceder
+                                                            categorías, además, controlas el Síndrome Metabólico que haya aparecido:
+                                                            (Obesidad, Diabetes, Hipertensión, Colesterol y Triglicéridos altos).</em
+                                                        >
+                                                    </p>
+                                                </li>
+                                            </ul>
+                                            </td>
+                                        </tr>
+        
+                                        <tr>
+                                            <td>
+                                                <p style="color: #002545"><strong>Interpretación de resultados</strong></p>
+                                                <p style="color: #666666" align="justify">
+                                                    La OMS Organización Mundial de la Salud, establece que una definición comúnmente
+                                                    en uso con los siguientes valores, acordados en 1997, publicados en 2000 y
+                                                    ajustados en 2010.
+                                                </p>
+                                                <img style="width: 70%;text-align: center;margin: 0 auto;" src="'.$url_img.'tabla.png" alt="imc">
+                                                    <p align="justify">
+                                                        Un resultado de IMC igual o mayor a 25 es el inicio del sobrepeso también
+                                                        llamado pre-obesidad, la antesala del Síndrome Metabólico.
+                                                    </p>
+                                                    &nbsp;
+                                                    <ul>
+                                                        <li>
+                                                                Ahora que conoces tu índice de masa corporal y la categoría en la que estás,
+                                                                debes conocer:
+                                                        </li>
+                                                        <li>
+                                                                Tu composición corporal (cuanto tienes de grasa, masa muscular, huesos y 10
+                                                                indicadores más).
+                                                        </li>
+                                                        <li>
+                                                                Cuál es tu índice de cintura talla y medidas de volumen.
+                                                        </li>
+                                                        <li>
+                                                                Cómo están tus indicadores metabólicos de grasa (azúcar, colesterol y
+                                                                triglicéridos). Tener un diagnóstico de tu estado de salud metabólico.
+                                                        </li>
+                                                        <li>
+                                                                Saber cómo puedes perder peso y grasa sostenido para acelerar tu metabolismo.
+                                                        </li>
+                                                    </ul>
+                                                    <p style="line-height: 130% !important" align="justify">
+                                                        <b
+                                                            >Si deseas conocer más sobre tu metabolismo, agenda tu cita para hacerte tu
+                                                            evaluación personalizada y con los resultados podemos sugerirte 2 opciones:</b
+                                                        >
+                                                    </p>
+                                                    <p>1. Realiza un <strong style="color: #002545">Metabograma</strong></p>
+                                                        <ul>
+                                                            <li>
+                                                                    Obtén un análisis exhaustivo y personalizado de tu metabolismo. Incluye
+                                                                    historial médico, composición corporal, antropometría y pruebas de laboratorio
+                                                                    avanzadas, todo para una visión completa de tu salud.
+                                                            </li>
+                                                        </ul>
+                                                        <p>
+                                                            2.Únete al
+                                                            <strong style="color: #002545">Programa Aceleración Metabólica PAM</strong>
+                                                        </p>
+                                                        <ul>
+                                                            <li>
+                                                                    Participa en un programa específico diseñado para acelerar tu metabolismo y
+                                                                    reducir grasa-peso de manera permanente y sostenible.
+                                                            </li>
+                                                        </ul>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>
+                                                <p><strong>Agenda tu cita ahora:</strong></p>
+                                                <p>
+                                                    <img style="width: 40px;" src="'.$url_img.'whatsapp.png" alt="whatsapp">
+                                                    <strong>Whatsapp: <a href="https://wa.me/33243501"
+                                                            target="_blank">3324-3501</a>
+                                                    </strong></p>
+                                                <p><strong>Ubícanos en:</strong></p>
+                                                <ul>
+                                                    <li><strong>Edificio Corporativo Muxbal - CAES</strong></li>
+                                                    <li><strong>Edificio 01010 - Zona 10</strong></li>
+                                                </ul>    
+                                                <img src="'.$url_img.'footer.png" alt="footer">
+                                            </td>
+                                        </tr>
+                                       
+                                    </tbody>
+                                </table>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </body>
+        </html> ';
+
+        // echo $body;
+        // exit();
+        $pdf = PDF::loadHTML($body);
+        return $pdf->download('datos_imc_'.$nombre.'_'.$apellido.'.pdf');
+    }
+
     public function handle(Request $request)
     {
         $data = $request->all();
@@ -74,7 +297,9 @@ class ImcWebhookController extends Controller
             ];
 
 
-            Imc_Formulario::create($dataToLog);
+            $newUser = Imc_Formulario::create($dataToLog);
+            $encryptedId = Crypt::encryptString($newUser->id);
+            $link = url('/webhook/imc_download') . '?id=' . urlencode($encryptedId);
 
 
             $mail = new PHPMailer(true);
@@ -204,6 +429,15 @@ class ImcWebhookController extends Controller
                                                                                                         <tr>
                                                                                                             <td align="left" class="esd-block-text">
                                                                                                                 <p style="line-height: 150% !important; color: #002545" align="right">Fecha: ' . date('Y-m-d') . '</p>
+                                                                                                                <p style="line-height: 150% !important; color: #002545" align="right"><a href="'. $link .'" style="display: inline-block; padding: 1px 15px; margin-left: 10px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">Descargar</a></p>
+                                                                                                                <p style="line-height: 150% !important; color: #002545" align="right"><a target="_blank">
+                                                                                                                    <img
+                                                                                                                        src="https://bclinik.com/imc/datos/img/imc.png"
+                                                                                                                        alt=""
+                                                                                                                        width="421"
+                                                                                                                        class="adapt-img"
+                                                                                                                    />
+                                                                                                                </a></p>
                                                                                                                 <p style="line-height: 150% !important">Hola ' . $nombre . ' ' . $apellido . '</p>
                                                                                                                 <p style="line-height: 150% !important">Gracias por confiarnos tus datos:</p>
                                                                                                                 <p style="line-height: 150% !important">

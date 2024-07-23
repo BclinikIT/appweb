@@ -177,7 +177,7 @@ class ImcWebhookController extends Controller
                                                                                                             <td align="center" class="esd-block-image" style="font-size: 0">
                                                                                                                 <a target="_blank">
                                                                                                                     <img
-                                                                                                                        src="https://bclinik.com/imc/datos/img/header.png"
+                                                                                                                        src="https://appweb.bclinik.com/img/img_correos/header.png"
                                                                                                                         alt=""
                                                                                                                         width="560"
                                                                                                                         class="adapt-img"
@@ -272,7 +272,7 @@ class ImcWebhookController extends Controller
                                                                                                             <td align="center" class="esd-block-image" style="font-size: 0">
                                                                                                                 <a target="_blank">
                                                                                                                     <img
-                                                                                                                        src="https://bclinik.com/imc/datos/img/imc.png"
+                                                                                                                        src="https://appweb.bclinik.com/img/img_correos/imc.png"
                                                                                                                         alt=""
                                                                                                                         width="421"
                                                                                                                         class="adapt-img"
@@ -382,7 +382,7 @@ class ImcWebhookController extends Controller
                                                                                                             <td align="center" class="esd-block-image" style="font-size: 0">
                                                                                                                 <a target="_blank">
                                                                                                                     <img
-                                                                                                                        src="https://bclinik.com/imc/datos/img/tabla.png"
+                                                                                                                        src="https://appweb.bclinik.com/img/img_correos/tabla.png"
                                                                                                                         alt=""
                                                                                                                         width="560"
                                                                                                                         class="adapt-img"
@@ -515,7 +515,7 @@ class ImcWebhookController extends Controller
                                                                                                         <tr>
                                                                                                             <td align="right" class="esd-block-image" style="font-size: 0">
                                                                                                                 <a target="_blank">
-                                                                                                                    <img src="https://bclinik.com/imc/datos/img/whatsapp.png" alt="" width="40" />
+                                                                                                                    <img src="https://appweb.bclinik.com/img/img_correos/whatsapp.png" alt="" width="40" />
                                                                                                                 </a>
                                                                                                             </td>
                                                                                                         </tr>
@@ -605,7 +605,7 @@ class ImcWebhookController extends Controller
                                                                                                             <td align="center" class="esd-block-image" style="font-size: 0">
                                                                                                                 <a target="_blank">
                                                                                                                     <img
-                                                                                                                        src="https://bclinik.com/imc/datos/img/footer.png"
+                                                                                                                        src="https://appweb.bclinik.com/img/img_correos/footer.png"
                                                                                                                         alt=""
                                                                                                                         width="560"
                                                                                                                         class="adapt-img"
@@ -742,7 +742,7 @@ class ImcWebhookController extends Controller
                                 <table width="600" cellpadding="0" cellspacing="0" border="0" style="color: #595959;">
                                     <tbody><tr>
                                         <td>
-                                            <img src="https://bclinik.com/imc/datos/img/header.png" alt="header" width="600" style="max-width: 100%;">
+                                            <img src="https://appweb.bclinik.com/img/img_correos/header.png" alt="header" width="600" style="max-width: 100%;">
                                         </td>
                                     </tr>
                                     <tr esd-text="true" class="esd-text">
@@ -767,7 +767,7 @@ class ImcWebhookController extends Controller
                                     </tr>
                                     <tr>
                                         <td align="center" style="padding: 20px 0;">
-                                            <img src="https://bclinik.com/imc/datos/img/imc.png" alt="imc" width="540" style="max-width: 90%;">
+                                            <img src="https://appweb.bclinik.com/img/img_correos/imc.png" alt="imc" width="540" style="max-width: 90%;">
                                         </td>
                                     </tr>
                                     <tr>
@@ -789,7 +789,7 @@ class ImcWebhookController extends Controller
                                     </tr>
                                     <tr>
                                         <td>
-                                            <img src="https://bclinik.com/imc/datos/img/footer.png" alt="footer" width="600" style="max-width: 100%;">
+                                            <img src="https://appweb.bclinik.com/img/img_correos/footer.png" alt="footer" width="600" style="max-width: 100%;">
                                         </td>
                                     </tr>
                                 </tbody></table>

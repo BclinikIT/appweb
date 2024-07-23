@@ -11,6 +11,7 @@ use PHPMailer\PHPMailer\Exception;
 use PDF; // Asegúrate de importar la clase PDF
 use App\Models\FormularioImc;
 use Illuminate\Support\Facades\Crypt;
+use Carbon\Carbon;
 
 class ImcWebhookController extends Controller
 {
@@ -47,7 +48,7 @@ class ImcWebhookController extends Controller
 
         
         $categoria = $user->categoria;
-
+        $fechaFormateada = Carbon::parse(date('Y-m-d'))->format('d/m/Y');
 
         $body = '<!DOCTYPE html>
         <html lang="en">
@@ -55,7 +56,7 @@ class ImcWebhookController extends Controller
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Invitación</title>
+            <title>Resultado IMC</title>
             <style>
             body{
                 margin:0;
@@ -81,7 +82,7 @@ class ImcWebhookController extends Controller
                                         <tr>
                                             <td>
                                                 <label for="" style="text-align: right;display: block;padding: 10px;">Fecha:
-                                                    '.date('Y-m-d').'</label>
+                                                    '.$fechaFormateada.'</label>
                                             </td>
                                         </tr>
                                         <tr>
@@ -106,7 +107,7 @@ class ImcWebhookController extends Controller
                                                 <li>
                                                     <p>
                                                         <em
-                                                            ><span style="color: #f1c232">​Entre 25 a 29.99</span> &nbsp;es sobrepeso
+                                                            ><span style="color: #f1c232">Entre 25 a 29.99</span> &nbsp;es sobrepeso
                                                             también llamado pre obesidad.
                                                         </em>
                                                     </p>
@@ -206,13 +207,20 @@ class ImcWebhookController extends Controller
                                                 <p><strong>Agenda tu cita ahora:</strong></p>
                                                 <p>
                                                     <img style="width: 40px;" src="'.$url_img.'whatsapp.png" alt="whatsapp">
-                                                    <strong>Whatsapp: <a href="https://wa.me/33243501"
+                                                    <strong>Whatsapp: <a style="color: #333333" href="https://wa.me/33243501"
                                                             target="_blank">3324-3501</a>
                                                     </strong></p>
                                                 <p><strong>Ubícanos en:</strong></p>
                                                 <ul>
-                                                    <li><strong>Edificio Corporativo Muxbal - CAES</strong></li>
-                                                    <li><strong>Edificio 01010 - Zona 10</strong></li>
+                                                    <li style="color: #333333">
+                                                            <a target="_blank" style="text-decoration: none; color: #333333" href="https://www.google.com/search?q=bio+clinik+muxbal">
+                                                        <stron>	Edificio Corporativo Muxbal &nbsp;- CAES</stron></a>
+                                                    </li>
+                                                    <li style="color: #333333">
+                                                            <a target="_blank" style="text-decoration: none; color: #333333" 	href="https://www.google.com/search?q=bio+clinik+zona+10">
+
+                                                                    <stron>Edificio 01010 - Zona 10</stron></a >
+                                                    </li>
                                                 </ul>    
                                                 <img src="'.$url_img.'footer.png" alt="footer">
                                             </td>
@@ -231,7 +239,7 @@ class ImcWebhookController extends Controller
         // echo $body;
         // exit();
         $pdf = PDF::loadHTML($body);
-        return $pdf->download('datos_imc_'.$nombre.'_'.$apellido.'.pdf');
+        return $pdf->download('Resultado IMC.pdf');
     }
 
     public function handle(Request $request)
@@ -278,7 +286,7 @@ class ImcWebhookController extends Controller
             }
             $categoria = obtenerCategoriaIMC($result);
 
-
+            $fechaFormateada = Carbon::parse(date('Y-m-d'))->format('d/m/Y');
             $dataToLog = [
                 'nombre' => $nombre,
                 'apellido' => $apellido,
@@ -296,6 +304,7 @@ class ImcWebhookController extends Controller
 
             ];
 
+            
 
             $newUser = Imc_Formulario::create($dataToLog);
             $encryptedId = Crypt::encryptString($newUser->id);
@@ -428,7 +437,7 @@ class ImcWebhookController extends Controller
                                                                                                     <tbody>
                                                                                                         <tr>
                                                                                                             <td align="left" class="esd-block-text">
-                                                                                                                <p style="line-height: 150% !important; color: #002545" align="right">Fecha: ' . date('Y-m-d') . '</p>
+                                                                                                                <p style="line-height: 150% !important; color: #002545" align="right">Fecha: ' . $fechaFormateada . '</p>
                                                                                                                 <p style="line-height: 150% !important; color: #002545" align="right"><a href="'. $link .'" style="display: inline-block; padding: 1px 15px; margin-left: 10px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">Descargar</a></p>
                                                                                                                 <p style="line-height: 150% !important; color: #002545" align="right"><a target="_blank">
                                                                                                                     <img
@@ -536,7 +545,7 @@ class ImcWebhookController extends Controller
                                                                                                                     <li>
                                                                                                                         <p>
                                                                                                                             <em
-                                                                                                                                ><span style="color: #f1c232">​Entre 25 a 29.99</span> &nbsp;es sobrepeso
+                                                                                                                                ><span style="color: #f1c232">Entre 25 a 29.99</span> &nbsp;es sobrepeso
                                                                                                                                 también llamado pre obesidad.
                                                                                                                             </em>
                                                                                                                         </p>
@@ -872,7 +881,7 @@ class ImcWebhookController extends Controller
 
 ';
 
-        $mail->Subject = 'Calculadora IMC';
+        $mail->Subject = 'Resultado IMC';
         $mail->isHTML(true);
         $mail->MsgHTML($body);
 

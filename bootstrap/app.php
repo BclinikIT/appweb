@@ -19,7 +19,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->validateCsrfTokens(except: [
             'webhook/imc_formulario',
-            'webhook/imc_invitacion'
+            'webhook/imc_invitacion',
+            'webhook/cribado_cotizacion',
         ]);
 
         //

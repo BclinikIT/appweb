@@ -7,6 +7,7 @@ use App\Http\Controllers\FormularioImcInvitadosController;
 
 use Inertia\Inertia;
 use App\Http\Controllers\ImcWebhookController;
+use App\Http\Controllers\CribadoWebhookController;
 use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
@@ -40,3 +41,6 @@ Route::middleware([
 
 Route::post('webhook/imc_formulario', [ImcWebhookController::class, 'handle']);
 Route::post('webhook/imc_invitacion', [ImcWebhookController::class, 'handleImcInvitacion']);
+
+Route::post('webhook/cribado_cotizacion', [CribadoWebhookController::class, 'handleCribadoCotizacion']);
+

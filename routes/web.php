@@ -31,10 +31,10 @@ Route::middleware([
     Route::resource('/formularioimc', FormularioImcController::class);
     Route::resource('/formularioimcinvitados', FormularioImcInvitadosController::class);
     Route::resource('/users', UserController::class);
+    Route::resource('users', UserController::class)->except(['show']);
 
     Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
-
 });
 
 

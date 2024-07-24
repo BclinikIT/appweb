@@ -36,9 +36,18 @@ export default {
                                         Exportar Datos
                                     </button>
                                 </div>
+                                
+                               
                             </div>
                         </div>
-                       
+                        <div class="flex flex-row mb-1 sm:mb-0 justify-between w-full"> 
+                            <div></div>
+                            <a :href="route('users.create')" class="border bg-blue-500 text-white hover:bg-blue-700 hover:text-white font-bold py-2 px-4 rounded">
+                                + Nuevo Usuario
+                            </a>
+
+                        </div>  
+                          
                         <!-- Resto de tu código -->
                         <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                             <div class="inline-block min-w-full shadow rounded-lg overflow-hidden">
@@ -81,8 +90,8 @@ export default {
                                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.updated_at }}</td>
                                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                                 <a :href="route('users.edit', dato.id)" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded">Editar</a>
-                                                <!-- <button @click="eliminar(dato)" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded">Eliminar</button> -->
-                                                <button @click="activar(dato)" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-3 rounded">Activo</button>
+                                                <!-- <button @click="confirmDelete(dato.id)" class="text-red-500 hover:text-red-700 ml-4">Eliminar</button> -->
+                                                <!-- <button @click="activar(dato)" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-3 rounded">Activo</button> -->
                                             </td>
                                         </tr>
                                     </tbody>
@@ -117,8 +126,10 @@ export default {
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { defineProps, ref, computed, onMounted } from 'vue';
+import axios from 'axios';
 import * as XLSX from 'xlsx';
 const props = defineProps(['datos']);
+
 
 const pageSize = 10; // Tamaño de página ajustado
 const currentPage = ref(1);
@@ -183,10 +194,32 @@ const editar = (dato) => {
     // Aquí puedes agregar la lógica para editar el usuario
 };
 
-const eliminar = (dato) => {
-    console.log('Eliminar:', dato);
-    // Aquí puedes agregar la lógica para eliminar el usuario
+const confirmDelete = (userId) => {
+    if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
+        axios.delete(route('users.destroy', userId))
+            .then(response => {
+                console.log('Respuesta del servidor:', response); // Imprimir la respuesta completa
+                alert(response.data.message); // Mostrar el mensaje de éxito desde la respuesta
+                // Aquí podrías agregar lógica para actualizar la lista de usuarios
+                fetchUsers(); // Función para volver a obtener la lista de usuarios
+            })
+            .catch(error => {
+                console.error('Error al eliminar el usuario:', error); // Imprimir el error completo
+                alert('Hubo un problema al eliminar el usuario');
+            });
+    }
 };
+
+const fetchUsers = () => {
+    axios.get(route('users.index'))
+        .then(response => {
+            props.datos = response.data; // Suponiendo que la respuesta contiene la lista de usuarios
+        })
+        .catch(error => {
+            console.error('Error al obtener la lista de usuarios:', error);
+        });
+};
+
 
 const activar = (dato) => {
     console.log('Activar:', dato);

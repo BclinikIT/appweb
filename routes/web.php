@@ -42,7 +42,7 @@ Route::middleware([
 
 
 
-    Route::resource('/cribado-form-cotizacion', CribadoController::class);
+    
 });
 
 

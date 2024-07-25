@@ -38,7 +38,147 @@ export default {
                     </div>
                 </div>
                 
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                    <!-- Card de población total -->
+                    <div class="bg-white overflow-hidden shadow rounded-lg">
+                        <div class="px-4 py-5 sm:p-6 flex items-center">
 
+                            <svg class="h-8 w-8 text-gray-500 mr-3" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+                            </svg>
+
+
+
+                            <div>
+                                <h3 class="text-lg leading-6 font-medium text-gray-900">
+                                    Población Total
+                                </h3>
+                                <div class="mt-2 text-sm text-gray-500">
+                                    Cantidad: {{ total }}
+                                </div>
+                                <div class="text-sm text-gray-500">
+                                    Porcentaje: {{ porcentajeTotal }}%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card de población de hombres -->
+                    <div class="bg-white overflow-hidden shadow rounded-lg">
+                        <div class="px-4 py-5 sm:p-6 flex items-center">
+
+                            <svg class="h-8 w-8 text-gray-500 mr-3" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                            </svg>
+                            <div>
+                                <h3 class="text-lg leading-6 font-medium text-gray-900">
+                                    Población de Hombres
+                                </h3>
+                                <div class="mt-2 text-sm text-gray-500">
+                                    Cantidad: {{ hombres }}
+                                </div>
+                                <div class="text-sm text-gray-500">
+                                    Porcentaje: {{ porcentajeHombres }}%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card de población de mujeres -->
+                    <div class="bg-white overflow-hidden shadow rounded-lg">
+                        <div class="px-4 py-5 sm:p-6 flex items-center">
+                            <svg class="h-8 w-8 text-gray-500 mr-3" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                            </svg>
+                            <div>
+                                <h3 class="text-lg leading-6 font-medium text-gray-900">
+                                    Población de Mujeres
+                                </h3>
+                                <div class="mt-2 text-sm text-gray-500">
+                                    Cantidad: {{ mujeres }}
+                                </div>
+                                <div class="text-sm text-gray-500">
+                                    Porcentaje: {{ porcentajeMujeres }}%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white overflow-hidden shadow rounded-lg">
+                        <div class="px-4 py-5 sm:p-6 flex items-center">
+                            <svg class="h-8 w-8 text-gray-500 mr-3" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                            <div>
+                                <h3 class="text-lg leading-6 font-medium text-gray-900">
+                                    Resultados de Media
+                                </h3>
+                                <div class="mt-2 text-sm text-gray-500">
+                                    Campo: {{ campoSeleccionado }}
+                                </div>
+
+                                <div class="text-sm text-gray-500">
+                                    Resultado: {{ calcularMedia }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white overflow-hidden shadow rounded-lg">
+                        <div class="px-4 py-5 sm:p-6 flex items-center">
+                            <svg class="h-8 w-8 text-gray-500 mr-3" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                            <div>
+                                <h3 class="text-lg leading-6 font-medium text-gray-900">
+                                    Resultados de Mediana
+                                </h3>
+                                <div class="mt-2 text-sm text-gray-500">
+                                    Campo: {{ campoSeleccionado }}
+                                </div>
+
+                                <div class="text-sm text-gray-500">
+                                    Resultado: {{ calcularMediana }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white overflow-hidden shadow rounded-lg">
+                        <div class="px-4 py-5 sm:p-6 flex items-center">
+
+
+                            <svg class="h-8 w-8 text-gray-500 mr-3" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+
+                            <div>
+                                <h3 class="text-lg leading-6 font-medium text-gray-900">
+                                    Resultados de la Moda
+                                </h3>
+                                <div class="mt-2 text-sm text-gray-500">
+                                    Campo: {{ campoSeleccionado }}
+                                </div>
+
+                                <div class="text-sm text-gray-500">
+                                    Resultado: {{ calcularModa }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
 
                 <!-- Contenedor de dos columnas -->
                 <div class="flex">
@@ -276,7 +416,7 @@ const hombres = ref(0);
 const mujeres = ref(0);
 
 // Campos y medidas
-const campos = ["edad", "peso_en_libras", "altura_en_cms", "imc"];
+const campos = ["edad", "peso_en_libras", "altura_en_cms"];
 const medidas = ["media", "mediana", "moda"];
 const campoSeleccionado = ref(campos[0]);
 const medidaSeleccionada = ref(medidas[0]);

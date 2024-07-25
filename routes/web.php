@@ -9,6 +9,9 @@ use Inertia\Inertia;
 use App\Http\Controllers\ImcWebhookController;
 use App\Http\Controllers\CribadoWebhookController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CribadoController;
+
+
 
 Route::get('/', function () {
     return Inertia::render('Auth/Login', [
@@ -30,10 +33,13 @@ Route::middleware([
 
     Route::resource('/formularioimc', FormularioImcController::class);
     Route::resource('/formularioimcinvitados', FormularioImcInvitadosController::class);
-    Route::resource('/users', UserController::class);
 
+    Route::resource('/users', UserController::class);
     Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+
+
+    Route::resource('/cribado-form-cotizacion', CribadoController::class);
 
 });
 

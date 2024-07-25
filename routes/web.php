@@ -35,11 +35,9 @@ Route::middleware([
     Route::resource('/formularioimcinvitados', FormularioImcInvitadosController::class);
 
     Route::resource('/users', UserController::class);
+
     Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
-
-
-    Route::resource('/cribado-form-cotizacion', CribadoController::class);
 
 });
 

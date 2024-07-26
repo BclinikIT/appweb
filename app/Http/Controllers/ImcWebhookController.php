@@ -15,10 +15,11 @@ use Carbon\Carbon;
 
 class ImcWebhookController extends Controller
 {
-    public function pdf(Request $request){  
+    public function pdf(Request $request)
+    {
 
-        $url_img = public_path('/img/img_correos/'); 
-        // $url_img = asset('/img/img_correos/').'/'; 
+        $url_img = public_path('/img/img_correos/');
+        // $url_img = asset('/img/img_correos/').'/';
 
         $encryptedId = $request->query('id');
         // $userId = Crypt::decryptString($encryptedId);
@@ -46,13 +47,13 @@ class ImcWebhookController extends Controller
 
         $result = round((($peso_r / $tallas_r) * 10) / 10, 2);
 
-        
+
         $categoria = $user->categoria;
         $fechaFormateada = Carbon::parse(date('Y-m-d'))->format('d/m/Y');
 
         $body = '<!DOCTYPE html>
         <html lang="en">
-        
+
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -64,7 +65,7 @@ class ImcWebhookController extends Controller
             }
             </style>
         </head>
-        
+
         <body>
             <table width="100%" bgcolor="#ffffff" cellpadding="0" cellspacing="0" border="0">
                 <tbody>
@@ -76,13 +77,13 @@ class ImcWebhookController extends Controller
                                     <tbody>
                                         <tr>
                                             <td>
-                                                <img src="'.$url_img.'header.png" alt="header">
+                                                <img src="' . $url_img . 'header.png" alt="header">
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <label for="" style="text-align: right;display: block;padding: 10px;">Fecha:
-                                                    '.$fechaFormateada.'</label>
+                                                    ' . $fechaFormateada . '</label>
                                             </td>
                                         </tr>
                                         <tr>
@@ -92,12 +93,12 @@ class ImcWebhookController extends Controller
                                                 <p>Tu <strong>IMC</strong> es de ' . $result . ' que corresponde a la categoría ' . $categoria . '</p>
                                                 <p style="color:#11455d;text-align: center;"><em> El índice de masa corporal es la relación de tu peso con tu estatura. </em></p>
                                                 <p style="color:#11455d;text-align: center;"> <em>Es el indicador más confiable para saber si tienes sobrepeso o ya estás en obesidad.</em> </p>
-        
+
                                             </td>
                                         </tr>
                                         <tr>
                                             <td style="text-align: center;">
-                                                <img style="width: 90%;text-align: center;margin: 0 auto;" src="'.$url_img.'imc.png"
+                                                <img style="width: 90%;text-align: center;margin: 0 auto;" src="' . $url_img . 'imc.png"
                                                     alt="imc">
                                             </td>
                                         </tr>
@@ -140,7 +141,7 @@ class ImcWebhookController extends Controller
                                             </ul>
                                             </td>
                                         </tr>
-        
+
                                         <tr>
                                             <td>
                                                 <p style="color: #002545"><strong>Interpretación de resultados</strong></p>
@@ -149,7 +150,7 @@ class ImcWebhookController extends Controller
                                                     en uso con los siguientes valores, acordados en 1997, publicados en 2000 y
                                                     ajustados en 2010.
                                                 </p>
-                                                <img style="width: 70%;text-align: center;margin: 0 auto;" src="'.$url_img.'tabla.png" alt="imc">
+                                                <img style="width: 70%;text-align: center;margin: 0 auto;" src="' . $url_img . 'tabla.png" alt="imc">
                                                     <p align="justify">
                                                         Un resultado de IMC igual o mayor a 25 es el inicio del sobrepeso también
                                                         llamado pre-obesidad, la antesala del Síndrome Metabólico.
@@ -201,12 +202,12 @@ class ImcWebhookController extends Controller
                                                         </ul>
                                             </td>
                                         </tr>
-                                        
+
                                         <tr>
                                             <td>
                                                 <p><strong>Agenda tu cita ahora:</strong></p>
                                                 <p>
-                                                    <img style="width: 40px;" src="'.$url_img.'whatsapp.png" alt="whatsapp">
+                                                    <img style="width: 40px;" src="' . $url_img . 'whatsapp.png" alt="whatsapp">
                                                     <strong>Whatsapp: <a style="color: #333333" href="https://wa.me/33243501"
                                                             target="_blank">3324-3501</a>
                                                     </strong></p>
@@ -221,11 +222,11 @@ class ImcWebhookController extends Controller
 
                                                                     <stron>Edificio 01010 - Zona 10</stron></a >
                                                     </li>
-                                                </ul>    
-                                                <img src="'.$url_img.'footer.png" alt="footer">
+                                                </ul>
+                                                <img src="' . $url_img . 'footer.png" alt="footer">
                                             </td>
                                         </tr>
-                                       
+
                                     </tbody>
                                 </table>
                             </table>
@@ -304,7 +305,7 @@ class ImcWebhookController extends Controller
 
             ];
 
-            
+
 
             $newUser = Imc_Formulario::create($dataToLog);
             $encryptedId = Crypt::encryptString($newUser->id);
@@ -438,7 +439,7 @@ class ImcWebhookController extends Controller
                                                                                                         <tr>
                                                                                                             <td align="left" class="esd-block-text">
                                                                                                                 <p style="line-height: 150% !important; color: #002545" align="right">Fecha: ' . $fechaFormateada . '</p>
-                                                                                                                <p style="line-height: 150% !important; color: #002545" align="right"><a href="'. $link .'" style="display: inline-block; padding: 1px 15px; margin-left: 10px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">Descargar</a></p>
+                                                                                                                <p style="line-height: 150% !important; color: #002545" align="right"><a href="' . $link . '" style="display: inline-block; padding: 1px 15px; margin-left: 10px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">Descargar</a></p>
                                                                                                                 <p style="line-height: 150% !important; color: #002545" align="right"><a target="_blank">
                                                                                                                     <img
                                                                                                                         src="https://bclinik.com/imc/datos/img/imc.png"
@@ -879,24 +880,17 @@ class ImcWebhookController extends Controller
                     </html>
 
 
-';
+            ';
 
-        $mail->Subject = 'Resultado IMC';
-        $mail->isHTML(true);
-        $mail->MsgHTML($body);
+            $mail->Subject = 'Resultado IMC';
+            $mail->isHTML(true);
+            $mail->MsgHTML($body);
 
-        // Enviar el correo
-        if (!$mail->send()) {
-            throw new \Exception('Error al enviar el correo: ' . $mail->ErrorInfo);
-        }
-
-
-            //  Log::info('Datos específicos recibidos del webhook:', $data);
-
-
+            if (!$mail->send()) {
+                throw new \Exception('Error al enviar el correo: ' . $mail->ErrorInfo);
+            }
             return response()->json(['status' => 'success']);
         } catch (\Exception $e) {
-            // Capturar cualquier excepción y registrarla
             Log::error('Error al procesar datos del webhook: ' . $e->getMessage());
             return response()->json(['status' => 'error', 'message' => 'Error al procesar los datos del webhook'], 500);
         }
@@ -940,7 +934,7 @@ class ImcWebhookController extends Controller
             $mail->addAddress($email_referido);
 
 
-                            $body = '
+            $body = '
                         <html dir="ltr" lang="en"><head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Invitación</title> <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""> <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400&display=swap" rel="stylesheet">
                         <style>
                             body {

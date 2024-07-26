@@ -10,8 +10,7 @@ use App\Http\Controllers\ImcWebhookController;
 use App\Http\Controllers\CribadoWebhookController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CribadoController;
-
-
+use App\Http\Controllers\EncuestaCribadoController;
 
 Route::get('/', function () {
     return Inertia::render('Auth/Login', [
@@ -33,6 +32,8 @@ Route::middleware([
 
     Route::resource('/formularioimc', FormularioImcController::class);
     Route::resource('/formularioimcinvitados', FormularioImcInvitadosController::class);
+    Route::resource('/cribado-form-cotizacion', CribadoController::class);
+    Route::resource('/encuesta', EncuestaCribadoController::class);
 
     Route::resource('/users', UserController::class);
 
@@ -41,7 +42,7 @@ Route::middleware([
 
 
 
-    Route::resource('/cribado-form-cotizacion', CribadoController::class);
+    
 });
 
 

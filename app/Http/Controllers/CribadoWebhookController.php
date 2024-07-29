@@ -24,12 +24,12 @@ class CribadoWebhookController extends Controller
             $email = $request->input('Email', '');
             $date = $request->input('Date', '');
             $time = $request->input('Time', '');
-            $page_url = $request->input('Page_URL', '');
-            $user_agent = $request->input('User_Agent', '');
-            $remote_ip = $request->input('Remote_IP', '');
-            $powered_by = $request->input('Powered_by', '');
-            $form_id = $request->input('form_id', '');
-            $form_name = $request->input('form_name', '');
+            $page_url = $request->input('Page_URL', 'null');
+            $user_agent = $request->input('User_Agent', 'null');
+            $remote_ip = $request->input('Remote_IP', 'null');
+            $powered_by = $request->input('Powered_by', 'null');
+            $form_id = $request->input('form_id', 'null');
+            $form_name = $request->input('form_name', 'null');
 
 
             $dataToInsert = [

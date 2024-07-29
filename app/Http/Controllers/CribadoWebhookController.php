@@ -12,15 +12,16 @@ class CribadoWebhookController extends Controller
 {
     public function handleCribadoCotizacion(Request $request)
     {
+        Log::info('Data to insert', ['request' => $request->all()]);        exit;
 
 
         try {
-            $nombre_de_la_empresa = $request->input('Nombre de la empresa', '');
+            $nombre_de_la_empresa = $request->input('Nombre_de_la_empresa', '');
             $direccion = $request->input('Dirección', '');
-            $cantidad_de_colaboradores = $request->input('Cantidad de colaboradores en total', '');
-            $nombre_de_quien_solicita = $request->input('Nombre de quien solicita', '');
-            $puesto_en_la_empresa = $request->input('Puesto en la empresa', '');
-            $telefono_directo_movil = $request->input('Teléfono directo – móvil', '');
+            $cantidad_de_colaboradores = $request->input('Cantidad_de_colaboradores_en_total', '');
+            $nombre_de_quien_solicita = $request->input('Nombre_de_quien_solicita', '');
+            $puesto_en_la_empresa = $request->input('Puesto_en_la_empresa', '');
+            $telefono_directo_movil = $request->input('Teléfono_directo_–_móvil', '');
             $email = $request->input('Email', '');
             $date = $request->input('Date', '');
             $time = $request->input('Time', '');
@@ -50,7 +51,6 @@ class CribadoWebhookController extends Controller
                 'form_name' => $form_name,
             ];
 
-            log::info('Data to insert', $dataToInsert);
             Cribado_Form_Cotizacion::create($dataToInsert);
 
 
@@ -753,13 +753,13 @@ class CribadoWebhookController extends Controller
             $mail->MsgHTML($body);
 
             $mail->Body = $body;
-            $mail->addStringAttachment($pdfContent, 'Respuesta_Cotización_Cribado.pdf');
+            //$mail->addStringAttachment($pdfContent, 'Respuesta_Cotización_Cribado.pdf');
 
             if (!$mail->send()) {
                 throw new \Exception('Error al enviar el correo: ' . $mail->ErrorInfo);
             }
 
-            return response()->json(['message' => 'Datos recibidos y almacenados correctamente'], 200);
+            return response()->json(['message' => 'Datos recibidos y almacenados correctamente', 'log'=>$dataToInsert], 200);
         } catch (\Exception $e) {
             Log::error('Error al procesar la solicitud: ' . $e->getMessage());
             return response()->json(['message' => 'Error al procesar la solicitud'], 500);

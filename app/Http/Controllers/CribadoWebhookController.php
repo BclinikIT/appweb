@@ -12,7 +12,7 @@ class CribadoWebhookController extends Controller
 {
     public function handleCribadoCotizacion(Request $request)
     {
-        Log::info('Data to insert', ['request' => $request->all()]);        exit;
+
 
 
         try {

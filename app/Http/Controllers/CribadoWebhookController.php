@@ -20,7 +20,7 @@ class CribadoWebhookController extends Controller
             $cantidad_de_colaboradores = $request->input('Cantidad de colaboradores en total', '');
             $nombre_de_quien_solicita = $request->input('Nombre de quien solicita', '');
             $puesto_en_la_empresa = $request->input('Puesto en la empresa', '');
-            $telefono_directo_movil = $request->input('Teléfono directo – móvi', '');
+            $telefono_directo_movil = $request->input('Teléfono directo – móvil', '');
             $email = $request->input('Email', '');
             $date = $request->input('Date', '');
             $time = $request->input('Time', '');

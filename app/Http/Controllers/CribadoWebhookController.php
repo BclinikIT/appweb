@@ -15,21 +15,23 @@ class CribadoWebhookController extends Controller
 
 
         try {
-            $nombre_de_la_empresa = $request->input('Nombre_de_la_empresa');
-            $direccion = $request->input('Dirección_');
-            $cantidad_de_colaboradores = $request->input('Cantidad_de_colaboradores_en_total');
-            $nombre_de_quien_solicita = $request->input('Nombre_de_quien_solicita');
-            $puesto_en_la_empresa = $request->input('Puesto_en_la_empresa');
-            $telefono_directo_movil = $request->input('Teléfono_directo_–_móvil');
-            $email = $request->input('Email');
-            $date = $request->input('Date');
-            $time = $request->input('Time');
-            $page_url = $request->input('Page_URL');
-            $user_agent = $request->input('User_Agent');
-            $remote_ip = $request->input('Remote_IP');
-            $powered_by = $request->input('Powered_by');
-            $form_id = $request->input('form_id');
-            $form_name = $request->input('form_name');
+            $nombre_de_la_empresa = $request->input('Nombre de la empresa', '');
+            $direccion = $request->input('Dirección', '');
+            $cantidad_de_colaboradores = $request->input('Cantidad de colaboradores en total', '');
+            $nombre_de_quien_solicita = $request->input('Nombre de quien solicita', '');
+            $puesto_en_la_empresa = $request->input('Puesto en la empresa', '');
+            $telefono_directo_movil = $request->input('Teléfono directo – móvi', '');
+            $email = $request->input('Email', '');
+            $date = $request->input('Date', '');
+            $time = $request->input('Time', '');
+            $page_url = $request->input('Page_URL', '');
+            $user_agent = $request->input('User_Agent', '');
+            $remote_ip = $request->input('Remote_IP', '');
+            $powered_by = $request->input('Powered_by', '');
+            $form_id = $request->input('form_id', '');
+            $form_name = $request->input('form_name', '');
+
+
             $dataToInsert = [
                 'nombre_de_la_empresa' => $nombre_de_la_empresa,
                 'direccion' => $direccion,
@@ -47,6 +49,8 @@ class CribadoWebhookController extends Controller
                 'form_id' => $form_id,
                 'form_name' => $form_name,
             ];
+
+            log::info('Data to insert', $dataToInsert);
             Cribado_Form_Cotizacion::create($dataToInsert);
 
 

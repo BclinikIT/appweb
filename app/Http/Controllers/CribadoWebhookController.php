@@ -15,21 +15,23 @@ class CribadoWebhookController extends Controller
 
 
         try {
-            $nombre_de_la_empresa = $request->input('Nombre_de_la_empresa');
-            $direccion = $request->input('Dirección_');
-            $cantidad_de_colaboradores = $request->input('Cantidad_de_colaboradores_en_total');
-            $nombre_de_quien_solicita = $request->input('Nombre_de_quien_solicita');
-            $puesto_en_la_empresa = $request->input('Puesto_en_la_empresa');
-            $telefono_directo_movil = $request->input('Teléfono_directo_–_móvil');
-            $email = $request->input('Email');
-            $date = $request->input('Date');
-            $time = $request->input('Time');
-            $page_url = $request->input('Page_URL');
-            $user_agent = $request->input('User_Agent');
-            $remote_ip = $request->input('Remote_IP');
-            $powered_by = $request->input('Powered_by');
-            $form_id = $request->input('form_id');
-            $form_name = $request->input('form_name');
+            $nombre_de_la_empresa = $request->input('Nombre_de_la_empresa', '');
+            $direccion = $request->input('Dirección', '');
+            $cantidad_de_colaboradores = $request->input('Cantidad_de_colaboradores_en_total', '');
+            $nombre_de_quien_solicita = $request->input('Nombre_de_quien_solicita', '');
+            $puesto_en_la_empresa = $request->input('Puesto_en_la_empresa', '');
+            $telefono_directo_movil = $request->input('Teléfono_directo_–_móvil', '');
+            $email = $request->input('Email', '');
+            $date = $request->input('Date', '');
+            $time = $request->input('Time', '');
+            $page_url = $request->input('Page_URL', 'null');
+            $user_agent = $request->input('User_Agent', 'null');
+            $remote_ip = $request->input('Remote_IP', 'null');
+            $powered_by = $request->input('Powered_by', 'null');
+            $form_id = $request->input('form_id', 'null');
+            $form_name = $request->input('form_name', 'null');
+
+
             $dataToInsert = [
                 'nombre_de_la_empresa' => $nombre_de_la_empresa,
                 'direccion' => $direccion,
@@ -47,15 +49,12 @@ class CribadoWebhookController extends Controller
                 'form_id' => $form_id,
                 'form_name' => $form_name,
             ];
+
             Cribado_Form_Cotizacion::create($dataToInsert);
 
-
-            // Genera el PDF en memoria
-            $data = compact('date', 'nombre_de_la_empresa', 'nombre_de_quien_solicita', 'puesto_en_la_empresa');
-
+            /* $data = compact('date', 'nombre_de_la_empresa', 'nombre_de_quien_solicita', 'puesto_en_la_empresa');
             $pdf = PDF::loadView('pdf.cribado_cotizacion', $data);
-            $pdfContent = $pdf->output();
-
+            $pdfContent = $pdf->output(); */
             $mail = new PHPMailer(true);
             $mail->CharSet = 'UTF-8';
             $mail->isSMTP();
@@ -749,13 +748,21 @@ class CribadoWebhookController extends Controller
             $mail->MsgHTML($body);
 
             $mail->Body = $body;
-            $mail->addStringAttachment($pdfContent, 'Respuesta_Cotización_Cribado.pdf');
-
+            //$mail->addStringAttachment($pdfContent, 'Respuesta_Cotización_Cribado.pdf');
             if (!$mail->send()) {
+                log::info('Cribado Cotizacion', $mail->ErrorInfo);
+
                 throw new \Exception('Error al enviar el correo: ' . $mail->ErrorInfo);
             }
 
-            return response()->json(['message' => 'Datos recibidos y almacenados correctamente'], 200);
+            return response()->json(['success' => true], 200);
+
+
+
+
+
+
+
         } catch (\Exception $e) {
             Log::error('Error al procesar la solicitud: ' . $e->getMessage());
             return response()->json(['message' => 'Error al procesar la solicitud'], 500);

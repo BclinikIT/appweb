@@ -141,22 +141,60 @@
 
                             </tr>
 
-                            <tr width="600px">
-                                <td >
-                                    <img style="width: 50%;" src="https://appweb.bclinik.com/img/img_correos/concentimiento.png" alt="imc" />
-                                </td>
-                                <td>
-                                    <ul>
-                                        <li>
-                                            <p style="text-align: justify;">
-                                                La encuesta es anónima y confidencial.
-                                            </p>
-                                        </li>
-                                    </ul>
-                                </td>
-
-
-                            </tr>
+                            <td align="left" class="esd-structure es-p10l es-p10r">
+                                <!--[if mso]><table width="590" cellpadding="0" cellspacing="0"><tr><td width="290" valign="top"><![endif]-->
+                                <table cellspacing="0" align="left" cellpadding="0" class="es-left">
+                                  <tbody>
+                                    <tr>
+                                      <td width="290" align="left" class="esd-container-frame es-m-p20b">
+                                        <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                                          <tbody>
+                                            <tr>
+                                              <td align="right" class="esd-block-image es-infoblock" style="font-size:0">
+                                                <a target="_blank">
+                                                  <img src="https://appweb.bclinik.com/img/img_correos/concentimiento.png" alt="" width="285">
+                                                </a>
+                                              </td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                                <!--[if mso]></td><td width="290" valign="top"><![endif]-->
+                                <table cellspacing="0" align="right" cellpadding="0" class="es-right">
+                                  <tbody>
+                                    <tr>
+                                      <td width="290" align="left" class="esd-container-frame">
+                                        <table cellpadding="0" cellspacing="0" width="100%" role="presentation">
+                                          <tbody>
+                                            <tr>
+                                              <td align="left" class="esd-block-text es-infoblock es-text-7744">
+                                                <ul class="es-text-mobile-size-14">
+                                                  <li style="color:#010101;font-size:14px">
+                                                    <p style="color:#010101;font-size:14px">
+                                                      <span style="color:#0f4761">
+                                                        Consentimiento informado:
+                                                      </span>
+                                                      Cada colaborador debe aceptar de manera explícita el
+                                                      <span style="color:#0f4761">
+                                                        “consentimiento informado
+                                                      </span>
+                                                      ” para participar, lo que asegura su comprensión y voluntariedad sin ninguna coacción.
+                                                    </p>
+                                                  </li>
+                                                </ul>
+                                              </td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                                <!--[if mso]></td></tr></table><![endif]-->
+                              </td>
 
                         </table>
                             {{-- final del primer bloque --}}

@@ -21,6 +21,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'webhook/imc_formulario',
             'webhook/imc_invitacion',
             'webhook/cribado_cotizacion',
+            'webhook/cribado_encuesta',
+
         ]);
 
         //

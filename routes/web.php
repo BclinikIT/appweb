@@ -14,6 +14,9 @@ use App\Http\Controllers\CribadoEncuestaWebhookController;
 use App\Http\Controllers\EncuestaCribadoController;
 use App\Models\EncuestaCribado;
 
+use App\Http\Controllers\PDFController;
+
+
 Route::get('/', function () {
     return Inertia::render('Auth/Login', [
         'canLogin' => Route::has('login'),
@@ -44,7 +47,7 @@ Route::middleware([
 
 
 
-    
+
 });
 
 
@@ -54,3 +57,4 @@ Route::post('webhook/imc_invitacion', [ImcWebhookController::class, 'handleImcIn
 Route::post('webhook/cribado_encuesta', [CribadoEncuestaWebhookController::class, 'handleCribadoEncuesta']);
 Route::post('webhook/cribado_cotizacion', [CribadoWebhookController::class, 'handleCribadoCotizacion']);
 
+Route::get('/generate-pdf', [PDFController::class, 'generatePDF']);

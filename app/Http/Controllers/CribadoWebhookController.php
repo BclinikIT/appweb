@@ -40,7 +40,7 @@ class CribadoWebhookController extends Controller
                 'puesto_en_la_empresa' => $puesto_en_la_empresa,
                 'telefono_directo_movil' => $telefono_directo_movil,
                 'email' => $email,
-                'date' => date('Y-m-d'),
+                'date' => date('d-m-Y'),
                 'time' => date('H:i:s'),
                 'page_url' => $page_url,
                 'user_agent' => $user_agent,
@@ -55,6 +55,8 @@ class CribadoWebhookController extends Controller
              $data = compact('date', 'nombre_de_la_empresa', 'nombre_de_quien_solicita', 'puesto_en_la_empresa');
             $pdf = PDF::loadView('pdf.cribado_cotizacion', $data);
             $pdfContent = $pdf->output();
+
+
             $mail = new PHPMailer(true);
             $mail->CharSet = 'UTF-8';
             $mail->isSMTP();

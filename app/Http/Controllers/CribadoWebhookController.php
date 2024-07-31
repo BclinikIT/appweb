@@ -40,7 +40,7 @@ class CribadoWebhookController extends Controller
                 'puesto_en_la_empresa' => $puesto_en_la_empresa,
                 'telefono_directo_movil' => $telefono_directo_movil,
                 'email' => $email,
-                'date' => date('d-m-Y'),
+                'date' => date('Y-m-d'),
                 'time' => date('H:i:s'),
                 'page_url' => $page_url,
                 'user_agent' => $user_agent,
@@ -52,7 +52,12 @@ class CribadoWebhookController extends Controller
 
             Cribado_Form_Cotizacion::create($dataToInsert);
 
-             $data = compact('date', 'nombre_de_la_empresa', 'nombre_de_quien_solicita', 'puesto_en_la_empresa');
+            $data = [
+                'date' => date('d-m-Y'),
+                'nombre_de_quien_solicita' => $nombre_de_quien_solicita,
+                'nombre_de_la_empresa' => $nombre_de_la_empresa,
+                'puesto_en_la_empresa' => $puesto_en_la_empresa,
+            ];
             $pdf = PDF::loadView('pdf.cribado_cotizacion', $data);
             $pdfContent = $pdf->output();
 

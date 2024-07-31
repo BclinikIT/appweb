@@ -52,9 +52,9 @@ class CribadoWebhookController extends Controller
 
             Cribado_Form_Cotizacion::create($dataToInsert);
 
-            /* $data = compact('date', 'nombre_de_la_empresa', 'nombre_de_quien_solicita', 'puesto_en_la_empresa');
+             $data = compact('date', 'nombre_de_la_empresa', 'nombre_de_quien_solicita', 'puesto_en_la_empresa');
             $pdf = PDF::loadView('pdf.cribado_cotizacion', $data);
-            $pdfContent = $pdf->output(); */
+            $pdfContent = $pdf->output();
             $mail = new PHPMailer(true);
             $mail->CharSet = 'UTF-8';
             $mail->isSMTP();
@@ -748,7 +748,7 @@ class CribadoWebhookController extends Controller
             $mail->MsgHTML($body);
 
             $mail->Body = $body;
-            //$mail->addStringAttachment($pdfContent, 'Respuesta_Cotización_Cribado.pdf');
+            $mail->addStringAttachment($pdfContent, 'Respuesta_Cotización_Cribado.pdf');
             if (!$mail->send()) {
                 log::info('Cribado Cotizacion', $mail->ErrorInfo);
 

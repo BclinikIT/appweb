@@ -214,10 +214,6 @@ class ImcWebhookController extends Controller
                                                 <p><strong>Ubícanos en:</strong></p>
                                                 <ul>
                                                     <li style="color: #333333">
-                                                            <a target="_blank" style="text-decoration: none; color: #333333" href="https://www.google.com/search?q=bio+clinik+muxbal">
-                                                        <stron>	Edificio Corporativo Muxbal &nbsp;- CAES</stron></a>
-                                                    </li>
-                                                    <li style="color: #333333">
                                                             <a target="_blank" style="text-decoration: none; color: #333333" 	href="https://www.google.com/search?q=bio+clinik+zona+10">
 
                                                                     <stron>Edificio 01010 - Zona 10</stron></a >
@@ -812,13 +808,6 @@ class ImcWebhookController extends Controller
                                                                                                                 <ul>
                                                                                                                     <li style="color: #333333">
                                                                                                                         <p style="color: #333333">
-                                                                                                                            <a target="_blank" style="text-decoration: none; color: #333333" href="https://www.google.com/search?q=bio+clinik+muxbal">
-                                                                                                                        <stron>	Edificio Corporativo Muxbal &nbsp;- CAES</stron></a
-                                                                                                                            >
-                                                                                                                        </p>
-                                                                                                                    </li>
-                                                                                                                    <li style="color: #333333">
-                                                                                                                        <p style="color: #333333">
                                                                                                                             <a target="_blank" style="text-decoration: none; color: #333333" 	href="https://www.google.com/search?q=bio+clinik+zona+10">
 
                                                                                                                                     <stron>Edificio 01010 - Zona 10</stron></a
@@ -1020,7 +1009,6 @@ class ImcWebhookController extends Controller
                                     <tr>
                                         <td style="padding: 10px;" esd-text="true" class="esd-text">
                                             <p><strong>Ubícanos en:</strong></p>
-                                            <p><a href="https://www.google.com/search?q=bio+clinik+muxbal&rlz=1C1UEAD_enGT1090GT1090&oq=bio+clinik+muxbal&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIJCAEQIRgKGKABMgkIAhAhGAoYoAHSAQgyMzY5ajBqN6gCALACAA&sourceid=chrome&ie=UTF-8">Edificio Corporativo Muxbal - CAES</a></p>
                                             <p><a href="https://www.google.com/search?q=bio+clinik+zona+10&rlz=1C1UEAD_enGT1090GT1090&oq=bio+clinik+zona+10&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIJCAEQIRgKGKABMgkIAhAhGAoYoAHSAQgzNTU0ajBqN6gCALACAA&sourceid=chrome&ie=UTF-8">Edificio 01010 - Zona 10</a></p>
                                         </td>
                                     </tr>

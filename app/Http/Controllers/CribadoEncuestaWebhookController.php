@@ -7,9 +7,19 @@ use Illuminate\Support\Facades\Log;
 use App\Models\EncuestaCribado;
 use PHPMailer\PHPMailer\PHPMailer;
 use PDF;
+use PhpParser\Node\Expr\FuncCall;
+use Illuminate\Support\Facades\Crypt;
 
 class CribadoEncuestaWebhookController extends Controller
 {
+
+    public function pdf(Request $request){
+        $encryptedId = $request->query('id');
+        $decryptedId = Crypt::decryptString($encryptedId);
+        $datos = EncuestaCribado::findOrFail($decryptedId);
+
+        echo $datos->nombre;
+    }
     public function handleCribadoEncuesta(Request $request)
     {
 
@@ -20,6 +30,10 @@ class CribadoEncuestaWebhookController extends Controller
             // return response()->json($request->all(), 500);
 
         try {
+
+            
+            
+
              // Extraer los datos de los campos del formulario
              $nombre = $request->input('fields.name.value');
              $apellido = $request->input('fields.apellido.value');
@@ -104,28 +118,29 @@ class CribadoEncuestaWebhookController extends Controller
 
             // Determinar el nivel de riesgo
             if ($sumatoria <= 5) {
-                $nivel = 'Alto';
+                $nivel = '<p style="color: red;font-size: 2em;font-weight: bold;">Alto</p>';
             } elseif ($sumatoria >= 6 && $sumatoria <= 10) {
-                $nivel = 'Medio';
+                $nivel = '<p style="color: #d7d436;font-size: 2em;font-weight: bold;">Medio</p>';
+                
             } else {
-                $nivel = 'Bajo';
+                $nivel = '<p style="color: #76b82a;font-size: 2em;font-weight: bold;">Bajo</p>';
             }
             
 
             if ($result < 25) {
-                $habitos_costumbre_riesgos = '<p style="color:red">Bajo</p>
+                $habitos_costumbre_riesgos = '<p style="color: #76b82a;font-size: 2em;font-weight: bold;">Bajo</p>
                                                 <p>&nbsp;¡Tienes un Estilo de Vida Saludable!</p>
                                                 <p>&nbsp;Tienes el metabolismo acelerado<br type="_moz"></p><i></i>';
             } elseif ($result >= 25 && $result <= 29) {
-                $habitos_costumbre_riesgos = '<p style="color:red">Medio<br type="_moz"></p>
+                $habitos_costumbre_riesgos = '<p style="color: #d7d436;font-size: 2em;font-weight: bold;">Medio<br type="_moz"></p>
                             <p>¡Tu Estilo de Vida puede mejorar!<br type="_moz"></p>
                             <p>Tienes el metabolismo irregular<br type="_moz"></p>';
             } elseif ($result >= 30 && $result <= 39) {
-                $habitos_costumbre_riesgos = '<p style="color:red">Alto&nbsp; &nbsp; &nbsp;<br type="_moz"></p>
+                $habitos_costumbre_riesgos = '<p style="color: red;font-size: 2em;font-weight: bold;">Alto&nbsp; &nbsp; &nbsp;<br type="_moz"></p>
                                                 <p>¡Debes cambiar tu Estilo de Vida!<br type="_moz"></p>
                                                 <p>Tienes el metabolismo lento<br type="_moz"></p>';
             } else {
-                $habitos_costumbre_riesgos = '<p style="color:red">Muy Alto&nbsp; &nbsp; &nbsp;<br type="_moz"></p>
+                $habitos_costumbre_riesgos = '<p style="color: red;font-size: 2em;font-weight: bold;">Muy Alto&nbsp; &nbsp; &nbsp;<br type="_moz"></p>
                                                 <p>¡Debes cambiar tu Estilo de Vida!<br type="_moz"></p>
                                                 <p>Tienes el metabolismo lento<br type="_moz"></p>';
             }
@@ -253,7 +268,9 @@ class CribadoEncuestaWebhookController extends Controller
  
  
  
-            EncuestaCribado::create($dataToInsert);
+            $newEncuesta = EncuestaCribado::create($dataToInsert);
+            $encryptedId = Crypt::encryptString($newEncuesta->id);
+            $link = url('/webhook/cribado_encuesta_download') . '?id=' . urlencode($encryptedId);
 
 
             $mail = new PHPMailer(true);
@@ -1275,7 +1292,9 @@ class CribadoEncuestaWebhookController extends Controller
                                                                                                     <tr>
                                                                                                         <td align="left" class="esd-block-text">
                                                                                                             <p>Fecha: '.date('Y/m/d').' <br></p>
+                                                                                                            <p style="line-height: 150% !important; color: #002545" align="right"><a href="' . $link . '" style="display: inline-block; padding: 1px 15px; margin-left: 10px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">Descargar</a></p>
                                                                                                         </td>
+                                                                                                        
                                                                                                     </tr>
                                                                                                 </tbody>
                                                                                             </table>
@@ -1364,8 +1383,8 @@ class CribadoEncuestaWebhookController extends Controller
                                                                                                             <p style="color: #333333;"><br></p>
                                                                                                             <p style="color: #333333;">Por lo que el nivel de riesgo de desarrollar Síndrome Metabólico es: </p>
                                                                                                             <p style="color: #333333;">'.$nivel.'</p>
-                                                                                                            <p style="text-align: center; color: #0e2841;"><i>El índice de masa corporal es la relación de tu peso con tu estatura,&nbsp; &nbsp; </i></p>
-                                                                                                            <p style="text-align: center; color: #0e2841;"><i>es el indicador más confiable para saber si tienes sobrepeso o ya estás en obesidad. &nbsp;&nbsp; </i></p>
+                                                                                                            <p style="text-align: center; color: #0e2841;"><i>El índice de masa corporal es la relación de tu peso con tu estatura. </i></p>
+                                                                                                            <p style="text-align: center; color: #0e2841;"><i>Es el indicador más confiable para saber si tienes sobrepeso o ya estás en obesidad. &nbsp;&nbsp; </i></p>
                                                                                                         </td>
                                                                                                     </tr>
                                                                                                 </tbody>
@@ -1649,7 +1668,6 @@ class CribadoEncuestaWebhookController extends Controller
                                                                                                         <td align="left" class="esd-block-text">
                                                                                                             <p style="color:#333333"><br></p>
                                                                                                             <p style="color:#333333"><br></p>
-                                                                                                            <p style="color:#333333"><br></p>
                                                                                                             '.$habitos_costumbre_riesgos.'
                                                                                                         </td>
                                                                                                     </tr>
@@ -1767,9 +1785,8 @@ class CribadoEncuestaWebhookController extends Controller
                                                                                                 <tbody>
                                                                                                     <tr>
                                                                                                         <td align="left" class="esd-block-text">
-                                                                                                            <p style="color: #333333; line-height: 200%;"><br></p>
-                                                                                                            <p style="line-height: 200%;"><br></p>
-                                                                                                            <p style="line-height: 200%;"><br></p>
+                                                                                                            <p style="color: #333333; "><br></p>
+                                                                                                            <p style="color: #333333; "><br></p>
                                                                                                             <p style="line-height: 200%;">Por antecedentes familiares la posibilidad es '.$antecedentesPorcentaje.'% </p>
                                                                                                             <p style="line-height: 200%;">Por factores de riesgo propios la posibilidad es '.$factoresPorcentaje.'% </p>
                                                                                                             <p style="line-height: 200%;">Por factores hereditarios la posibilidad es '.$hereditariosPorcentaje.'% </p>
@@ -1808,9 +1825,7 @@ class CribadoEncuestaWebhookController extends Controller
                                                                                                     <tr>
                                                                                                         <td align="left" class="esd-block-text">
                                                                                                             <p><i>Prediabetes significa que tienes un nivel de glucosa sanguínea más alto de lo normal. Aún no es lo suficientemente alto como para considerarse diabetes tipo 2, pero si no haces cambios en el estilo de vida, tienes una alta probabilidad de desarrollarla. La Prediabetes se cura, la Diabetes no. </i></p>
-                                                                                                            <p><i>&nbsp;</i></p>
                                                                                                             <p>La certeza si estás desarrollando Síndrome Metabólico, prediabetes o ya tienes diabetes es con una prueba de sangre por laboratorio. Agenda tu cita para realizar la prueba. </p>
-                                                                                                            <p><br></p>
                                                                                                             <p><b>Si deseas conocer más sobre tu metabolismo, agenda tu cita para hacerte tu evaluación personalizada y con los resultados podemos sugerirte 2 opciones: </b></p>
                                                                                                             <ol>
                                                                                                                 <li>Realiza un <b>Metabograma </b></li>
@@ -1881,26 +1896,11 @@ class CribadoEncuestaWebhookController extends Controller
                                                                             <table cellpadding="0" cellspacing="0" class="es-left" align="left">
                                                                                 <tbody>
                                                                                     <tr>
-                                                                                        <td width="47" class="esd-container-frame es-m-p20b" align="left">
+                                                                                        <td width="200" class="esd-container-frame es-m-p20b" align="left">
                                                                                             <table cellpadding="0" cellspacing="0" width="100%">
                                                                                                 <tbody>
                                                                                                     <tr>
                                                                                                         <td align="center" class="esd-block-image" style="font-size: 0px;"><a target="_blank"><img class="adapt-img" src="https://appweb.bclinik.com/img/img_correos/whatsapp.png" alt style="display: block;" width="40"></a></td>
-                                                                                                    </tr>
-                                                                                                </tbody>
-                                                                                            </table>
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                </tbody>
-                                                                            </table>
-                                                                            <!--[if mso]></td><td width="20"></td><td width="493" valign="top"><![endif]-->
-                                                                            <table cellpadding="0" cellspacing="0" class="es-right" align="right">
-                                                                                <tbody>
-                                                                                    <tr>
-                                                                                        <td width="493" align="left" class="esd-container-frame">
-                                                                                            <table cellpadding="0" cellspacing="0" width="100%">
-                                                                                                <tbody>
-                                                                                                    <tr>
                                                                                                         <td align="left" class="esd-block-text">
                                                                                                             <p><b>Whatsapp: </b><a href="https://wa.link/d8atu5"><b> 3324-3501 </b></a><br type="_moz"></p>
                                                                                                         </td>
@@ -1911,7 +1911,6 @@ class CribadoEncuestaWebhookController extends Controller
                                                                                     </tr>
                                                                                 </tbody>
                                                                             </table>
-                                                                            <!--[if mso]></td></tr></table><![endif]-->
                                                                         </td>
                                                                     </tr>
                                                                 </tbody>
@@ -1969,7 +1968,7 @@ class CribadoEncuestaWebhookController extends Controller
                                                                                                 <tbody>
                                                                                                     <tr>
                                                                                                         <td align="left" class="esd-block-text">
-                                                                                                            <p>⮚&nbsp;&nbsp;&nbsp;&nbsp; <b>Edificio 01010 - Zona 10&nbsp;&nbsp;&nbsp;&nbsp; </b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                                                                                                            <p>⮚&nbsp;&nbsp;&nbsp;&nbsp; <a target="_blank" style="text-decoration: none; color: #333333;" href="https://www.google.com/search?q=bio+clinik+zona+10"><b>Edificio 01010 - Zona 10&nbsp;&nbsp;&nbsp;&nbsp; </b></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
                                                                                                         </td>
                                                                                                     </tr>
                                                                                                 </tbody>

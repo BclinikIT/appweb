@@ -59,5 +59,6 @@ Route::post('webhook/cribado_encuesta', [CribadoEncuestaWebhookController::class
 Route::get('webhook/cribado_encuesta_download', [CribadoEncuestaWebhookController::class, 'pdf']);
 
 Route::post('webhook/cribado_cotizacion', [CribadoWebhookController::class, 'handleCribadoCotizacion']);
+Route::get('webhook/cribado_cotizacion_download', [CribadoEncuestaWebhookController::class, 'pdf']);
 
 Route::get('/generate-pdf', [PDFController::class, 'generatePDF']);

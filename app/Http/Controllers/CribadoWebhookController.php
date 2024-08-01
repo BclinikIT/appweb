@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Cribado_Form_Cotizacion;
 use PHPMailer\PHPMailer\PHPMailer;
 use PDF;
+use Illuminate\Support\Facades\Crypt;
+use Carbon\Carbon;
 
 class CribadoWebhookController extends Controller
 {
@@ -50,7 +52,9 @@ class CribadoWebhookController extends Controller
                 'form_name' => $form_name,
             ];
 
-            Cribado_Form_Cotizacion::create($dataToInsert);
+            $newCribado = Cribado_Form_Cotizacion::create($dataToInsert);
+            $encryptedId = Crypt::encryptString($newCribado->id);
+            $link = url('/webhook/cribado_cotizacion_download') . '?id=' . urlencode($encryptedId);
 
             $data = [
                 'date' => date('d-m-Y'),
@@ -211,8 +215,9 @@ class CribadoWebhookController extends Controller
                                                                         <span style="color:#0F4761">
                                                                         &nbsp; Fecha
                                                                         </span>
-                                                                        : '.date('d-m-Y').'
+                                                                        : '.date('Y/m/d').'
                                                                     </p>
+                                                                    <p style="line-height: 150% !important; color: #002545" align="right"><a href="' . $link . '" style="display: inline-block; padding: 1px 15px; margin-left: 10px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">Descargar</a></p>
                                                                     </td>
                                                                 </tr>
                                                                 </tbody>

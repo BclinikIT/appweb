@@ -1826,15 +1826,22 @@ class CribadoEncuestaWebhookController extends Controller
                                                                                                         <td align="left" class="esd-block-text">
                                                                                                             <p><i>Prediabetes significa que tienes un nivel de glucosa sanguínea más alto de lo normal. Aún no es lo suficientemente alto como para considerarse diabetes tipo 2, pero si no haces cambios en el estilo de vida, tienes una alta probabilidad de desarrollarla. La Prediabetes se cura, la Diabetes no. </i></p>
                                                                                                             <p>La certeza si estás desarrollando Síndrome Metabólico, prediabetes o ya tienes diabetes es con una prueba de sangre por laboratorio. Agenda tu cita para realizar la prueba. </p>
-                                                                                                            <p><b>Si deseas conocer más sobre tu metabolismo, agenda tu cita para hacerte tu evaluación personalizada y con los resultados podemos sugerirte 2 opciones: </b></p>
+                                                                                                            <p style="line-height: 130% !important" align="justify">
+                                                                                                                <b>Si deseas conocer más sobre tu metabolismo, agenda tu cita para hacerte tu
+                                                                                                                    evaluación personalizada y con los resultados podemos sugerirte 2 opciones:</b>
+                                                                                                            </p>
+                                                                                                            
                                                                                                             <ol>
-                                                                                                                <li>Realiza un <b>Metabograma </b></li>
+                                                                                                                <li><p>Realiza un <strong style="color: #002545">Metabograma</strong></p>
+                                                                                                                        Obtén un análisis exhaustivo y personalizado de tu metabolismo. Incluye
+                                                                                                                        historial médico, composición corporal, antropometría y pruebas de laboratorio
+                                                                                                                        avanzadas, todo para una visión completa de tu salud.
+                                                                                                                </li>
+                                                                                                                <li><p> Únete al <strong style="color: #002545">Programa Aceleración Metabólica PAM</strong></p>
+                                                                                                                        Participa en un programa específico diseñado para acelerar tu metabolismo y
+                                                                                                                        reducir grasa-peso de manera permanente y sostenible.
+                                                                                                                </li>
                                                                                                             </ol>
-                                                                                                            <p>Obtén un análisis exhaustivo y personalizado de tu metabolismo. Incluye historial médico, composición corporal, antropometría y pruebas de laboratorio avanzadas, todo para una visión completa de tu salud. </p>
-                                                                                                            <ol>
-                                                                                                                <li>Únete al <b>Programa Aceleración Metabólica PAM </b></li>
-                                                                                                            </ol>
-                                                                                                            <p>Participa en un programa específico diseñado para acelerar tu metabolismo y reducir grasa-peso de manera permanente y sostenible. </p>
                                                                                                         </td>
                                                                                                     </tr>
                                                                                                 </tbody>

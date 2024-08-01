@@ -12,15 +12,16 @@ class PDFController extends Controller
         $data = [
             // Aquí puedes pasar datos al archivo Blade si es necesario
             'date' => date('Y-m-d'),
-            'nombre_de_quien_solicita' => 'Juan Pérez',
-            'nombre_de_la_empresa' => 'Empresa S.A. de C.V.',
-            'puesto_en_la_empresa' => 'Gerente de Ventas',
+            'nombre' => 'Juan Pérez',
+            'apellido' => 'Empresa S.A. de C.V.',
+            'imc'=> '25.5',
+            'categoria'=> 'Sobrepeso',
             // Otros datos...
         ];
 
-        $pdf = PDF::loadView('pdf.cribado_cotizacion', $data);
+        $pdf = PDF::loadView('pdf.cribado_encuesta', $data);
 
         //return $pdf->download('cribado_cotizacion.pdf');
-        return $pdf->stream('cribado_cotizacion.pdf');
+        return $pdf->stream('cribado_encuesta.pdf');
     }
 }

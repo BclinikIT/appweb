@@ -62,6 +62,11 @@ class ImcWebhookController extends Controller
         return $pdf->download('Resultado IMC.pdf');
     }
 
+    public function pdf_imc_invitado(Request $request)
+    {
+
+
+    }
     public function handle(Request $request)
     {
         try {
@@ -160,7 +165,10 @@ class ImcWebhookController extends Controller
                 'hora' => date('H:i:s'),
                 'form_id' => $form_id
             ];
-            Imc_Invitacion::create($dataToSave);
+            $newImc_invitacion = Imc_Invitacion::create($dataToSave);
+            $encryptedId = Crypt::encryptString($newImc_invitacion->id);
+            $link = url('/pdf/download/imc_invitado') . '?id=' . urlencode($encryptedId);
+            $fechaFormateada = Carbon::parse(date('Y-m-d'))->format('d/m/Y');
 
 
             $mail = new PHPMailer(true);
@@ -239,7 +247,9 @@ class ImcWebhookController extends Controller
                                                     </tr>
                                                     <tr esd-text="true" class="esd-text">
                                                         <td align="right" style="padding: 10px;">
-                                                            Fecha: ' . date('Y-m-d') . '
+                                                            <p style="line-height: 150% !important; color: #002545" align="right">Fecha: ' . $fechaFormateada . '</p>
+                                                            <p style="line-height: 150% !important; color: #002545" align="right"><a href="' . $link . '" style="display: inline-block; padding: 1px 15px; margin-left: 10px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">Descargar</a></p>
+                                                                                                                
                                                         </td>
                                                     </tr>
                                                     <tr>

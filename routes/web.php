@@ -66,6 +66,8 @@ Route::prefix('webhook')->group(function () {
 Route::prefix('pdf/download')->group(function()
 {
     Route::get('/imc_formulario', [ImcWebhookController::class, 'pdf']);
+    Route::get('/imc_invitado', [ImcWebhookController::class, 'pdf_imc_invitado']);
+
 
 
 });

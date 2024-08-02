@@ -4,59 +4,59 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\Services\EmailService;
 use App\Models\Imc_Formulario;
 use App\Models\Imc_Invitacion;
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-use PDF; // Asegúrate de importar la clase PDF
-use App\Models\FormularioImc;
 use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
+use PDF;
+use App\Models\FormularioImc;
 
 class ImcWebhookController extends Controller
 {
+    protected $emailService;
+    public function __construct(EmailService $emailService)
+    {
+        $this->emailService = $emailService;
+    }
+
+    private function calculateImc($peso_en_libras, $altura_en_centimetros)
+    {
+        $peso_kg = $peso_en_libras / 2.20462;
+        $altura_m = $altura_en_centimetros / 100;
+        return round(($peso_kg / ($altura_m * $altura_m)), 2);
+    }
+
+
+    private function obtenerCategoriaIMC($imc)
+    {
+        if ($imc < 18.5) {
+            return "Infrapeso";
+        } elseif ($imc >= 18.5 && $imc < 25) {
+            return "Normal";
+        } elseif ($imc >= 25 && $imc < 30) {
+            return "Sobrepeso";
+        } elseif ($imc >= 30 && $imc < 40) {
+            return "Obesidad";
+        } else {
+            return "Obesidad mórbida";
+        }
+    }
+
+
     public function pdf(Request $request)
     {
-        $url_img = public_path('/img/img_correos/');
         $encryptedId = $request->query('id');
         $decryptedId = Crypt::decryptString($encryptedId);
+        $formulario = FormularioImc::findOrFail($decryptedId);
 
-        $user = FormularioImc::findOrFail($decryptedId);
-        $nombre = $user->nombre;
-        $apellido = $user->apellido;
-        $edad = $user->edad;
-        $genero = $user->genero;
-        $peso_en_libras = $user->peso_en_libras;
-        $altura_en_centimetros = $user->altura_en_cms;
-        $correo = $user->correo;
-        $telefono = $user->telefono;
-
-
-        $formName = '';
-        $form_id = $user->form_id;
-
-
-
-        $peso_r = ($peso_en_libras / 2.20462);
-        $talla = ($altura_en_centimetros / 100);
-        $tallas_r = ($talla * $talla);
-
-        $result = round((($peso_r / $tallas_r) * 10) / 10, 2);
-
-
-        $categoria = $user->categoria;
-        $fechaFormateada = Carbon::parse(date('Y-m-d'))->format('d/m/Y');
-
-        $dataToPDF= [
-            'date'=>date('d-m-Y'),
-            'nombre'=>$nombre,
-            'apellido'=>$apellido,
-            'imc'=>$result,
-            'categoria'=>$categoria,
+        $dataToPDF = [
+            'date' => date('d-m-Y'),
+            'nombre' => $formulario->nombre,
+            'apellido' => $formulario->apellido,
+            'imc' => $formulario->imc,
+            'categoria' => $formulario->categoria,
         ];
-
-
-
 
         $pdf = PDF::loadView('pdf.imc_formulario', $dataToPDF);
         return $pdf->download('Resultado IMC.pdf');
@@ -64,658 +64,74 @@ class ImcWebhookController extends Controller
 
     public function handle(Request $request)
     {
-
         try {
-            $nombre = $request->input('Nombre:');
-            $apellido = $request->input('Apellido:');
-            $edad = $request->input('Edad:');
-            $genero = $request->input('Genero:');
-            $peso_en_libras = $request->input('Peso_en_libras:');
-            $altura_en_centimetros = $request->input('Altura_en_cms:');
-            $correo = $request->input('Correo:');
-            $telefono = $request->input('Telefono:');
+            // Recoger datos del request
+            $data = $request->only([
+                'Nombre:',
+                'Apellido:',
+                'Edad:',
+                'Genero:',
+                'Peso_en_libras:',
+                'Altura_en_cms:',
+                'Correo:',
+                'Telefono:',
+                'form_name',
+                'form_id'
+            ]);
 
+            // Calcular IMC y categoría
+            $result = $this->calculateImc($data['Peso_en_libras:'], $data['Altura_en_cms:']);
+            $categoria = $this->obtenerCategoriaIMC($result);
 
-            $formName = $request->input('form_name');
-            $form_id = $request->input('form_id');
-
-
-
-            $peso_r = ($peso_en_libras / 2.20462);
-            $talla = ($altura_en_centimetros / 100);
-            $tallas_r = ($talla * $talla);
-
-            $result = round((($peso_r / $tallas_r) * 10) / 10, 2);
-
-            function obtenerCategoriaIMC($imc)
-            {
-                if ($imc < 18.5) {
-                    return "Infrapeso";
-                } elseif ($imc >= 18.5 && $imc < 25) {
-                    return "Normal";
-                } elseif ($imc >= 25 && $imc < 30) {
-                    return "Sobrepeso";
-                } elseif ($imc >= 30 && $imc < 40) {
-                    return "Obesidad";
-                } elseif ($imc >= 40) {
-                    return "Obesidad mórbida";
-                } else {
-                    return "Valor IMC no válido";
-                }
-            }
-            $categoria = obtenerCategoriaIMC($result);
-
-            $fechaFormateada = Carbon::parse(date('Y-m-d'))->format('d/m/Y');
+            // Preparar datos para guardar
             $dataToLog = [
-                'nombre' => $nombre,
-                'apellido' => $apellido,
-                'edad' => $edad,
-                'genero' => $genero,
-                'peso_en_libras' => $peso_en_libras,
-                'altura_en_cms' => $altura_en_centimetros,
-                'correo' => $correo,
-                'telefono' => $telefono,
+                'nombre' => $data['Nombre:'],
+                'apellido' => $data['Apellido:'],
+                'edad' => $data['Edad:'],
+                'genero' => $data['Genero:'],
+                'peso_en_libras' => $data['Peso_en_libras:'],
+                'altura_en_cms' => $data['Altura_en_cms:'],
+                'correo' => $data['Correo:'],
+                'telefono' => $data['Telefono:'],
                 'categoria' => $categoria,
                 'imc' => $result,
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s'),
-                'form_id' => "0"
-
+                'fecha' => Carbon::now()->format('Y-m-d'),
+                'hora' => Carbon::now()->format('H:i:s'),
+                'form_id' => $data['form_id'] ?? "0"
             ];
 
-
-
+            // Crear nuevo registro
             $newUser = Imc_Formulario::create($dataToLog);
             $encryptedId = Crypt::encryptString($newUser->id);
             $link = url('/pdf/download/imc_formulario') . '?id=' . urlencode($encryptedId);
 
-
-            $dataToPDF= [
-                'date'=>date('d-m-Y'),
-                'nombre'=>$nombre,
-                'apellido'=>$apellido,
-                'imc'=>$result,
-                'categoria'=>$categoria,
+            // Preparar datos para PDF
+            $dataToPDF = [
+                'date' => Carbon::now()->format('d-m-Y'),
+                'nombre' => $data['Nombre:'],
+                'apellido' => $data['Apellido:'],
+                'imc' => $result,
+                'categoria' => $categoria,
+                'link' => $link
             ];
 
-
             $pdf = PDF::loadView('pdf.imc_formulario', $dataToPDF);
-             $pdfContent = $pdf->output();
+            $pdfContent = $pdf->output();
 
 
-            $mail = new PHPMailer(true);
-            $mail->CharSet = 'UTF-8';
-            $mail->isSMTP();
-            $mail->Host = 'bclinik.com';
-            $mail->Port = 465;
-            $mail->SMTPSecure = 'ssl';
-            $mail->SMTPAuth = true;
-            $mail->Username = 'noreply@bclinik.com';
-            $mail->Password = 'Password$001';
-            $mail->setFrom('noreply@bclinik.com', 'Calculadora IMC');
-            $mail->addReplyTo('noreply@bclinik.com', 'Calculadora IMC');
-            $mail->addAddress($correo);
 
-            $body = '
-                    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-                    <html
-                        dir="ltr"
-                        xmlns="http://www.w3.org/1999/xhtml"
-                        xmlns:o="urn:schemas-microsoft-com:office:office"
-                    >
-                        <head>
-                            <meta charset="UTF-8" />
-                            <meta content="width=device-width, initial-scale=1" name="viewport" />
-                            <meta name="x-apple-disable-message-reformatting" />
-                            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-                            <meta content="telephone=no" name="format-detection" />
-                            <title></title>
-                            <!--[if (mso 16)]>
-                                <style type="text/css">
-                                    a {
-                                        text-decoration: none;
-                                    }
-                                </style>
-                            <![endif]-->
-                            <!--[if gte mso 9
-                                ]><style>
-                                    sup {
-                                        font-size: 100% !important;
-                                    }
-                                </style><!
-                            [endif]-->
-                            <!--[if gte mso 9]>
-                                <xml>
-                                    <o:OfficeDocumentSettings>
-                                        <o:AllowPNG></o:AllowPNG>
-                                        <o:PixelsPerInch>96</o:PixelsPerInch>
-                                    </o:OfficeDocumentSettings>
-                                </xml>
-                            <![endif]-->
-                            <!--[if mso]>
-                    <style type="text/css">
-                        ul {
-                    margin: 0 !important;
-                    }
-                    ol {
-                    margin: 0 !important;
-                    }
-                    li {
-                    margin-left: 47px !important;
-                    }
+            // Preparar y enviar el correo electrónico
+            $recipient = $data['Correo:'];
+            $subject = 'Resultado IMC';
+            $view = 'emails.imc_formulario';
+            $emailData = $dataToPDF;
+            $attachments = [
+                ['content' => $pdfContent, 'name' => 'Respuesta_Calculadora_IMC.pdf']
+            ];
 
-                    </style><![endif]
-                    --></head>
-                        <body class="body">
-                            <div dir="ltr" class="es-wrapper-color">
-                                <!--[if gte mso 9]>
-                                    <v:background xmlns:v="urn:schemas-microsoft-com:vml" fill="t">
-                                        <v:fill type="tile" color="#f6f6f6"></v:fill>
-                                    </v:background>
-                                <![endif]-->
-                                <table class="es-wrapper" width="100%" cellspacing="0" cellpadding="0">
-                                    <tbody>
-                                        <tr>
-                                            <td class="esd-email-paddings" valign="top">
-                                                <table class="es-content" cellspacing="0" cellpadding="0" align="center">
-                                                    <tbody>
-                                                        <tr>
-                                                            <td class="esd-stripe" align="center">
-                                                                <table
-                                                                    class="es-content-body"
-                                                                    width="600"
-                                                                    cellspacing="0"
-                                                                    cellpadding="0"
-                                                                    bgcolor="#ffffff"
-                                                                    align="center"
-                                                                    style="border-width: 0"
-                                                                >
-                                                                    <tbody>
-                                                                        <tr>
-                                                                            <td class="esd-structure es-p20t es-p20r es-p20l" align="left">
-                                                                                <table width="100%" cellspacing="0" cellpadding="0">
-                                                                                    <tbody>
-                                                                                        <tr>
-                                                                                            <td class="esd-container-frame" width="560" valign="top" align="center">
-                                                                                                <table width="100%" cellspacing="0" cellpadding="0">
-                                                                                                    <tbody>
-                                                                                                        <tr>
-                                                                                                            <td align="center" class="esd-block-image" style="font-size: 0">
-                                                                                                                <a target="_blank">
-                                                                                                                    <img
-                                                                                                                        src="https://appweb.bclinik.com/img/img_correos/header.png"
-                                                                                                                        alt=""
-                                                                                                                        width="560"
-                                                                                                                        class="adapt-img"
-                                                                                                                    />
-                                                                                                                </a>
-                                                                                                            </td>
-                                                                                                        </tr>
-                                                                                                    </tbody>
-                                                                                                </table>
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                    </tbody>
-                                                                                </table>
-                                                                            </td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td class="esd-structure es-p20t es-p35l es-p25r" align="left">
-                                                                                <table cellpadding="0" cellspacing="0">
-                                                                                    <tbody>
-                                                                                        <tr>
-                                                                                            <td width="540" class="esd-container-frame" align="left">
-                                                                                                <table cellpadding="0" cellspacing="0" width="100%" role="presentation">
-                                                                                                    <tbody>
-                                                                                                        <tr>
-                                                                                                            <td align="left" class="esd-block-text">
-                                                                                                                <p style="line-height: 150% !important; color: #002545" align="right">Fecha: ' . $fechaFormateada . '</p>
-                                                                                                                <p style="line-height: 150% !important; color: #002545" align="right"><a href="' . $link . '" style="display: inline-block; padding: 1px 15px; margin-left: 10px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">Descargar</a></p>
-                                                                                                                <p style="line-height: 150% !important; color: #002545" align="right"><a target="_blank">
-                                                                                                                    <img
-                                                                                                                        src="https://bclinik.com/imc/datos/img/imc.png"
-                                                                                                                        alt=""
-                                                                                                                        width="421"
-                                                                                                                        class="adapt-img"
-                                                                                                                    />
-                                                                                                                </a></p>
-                                                                                                                <p style="line-height: 150% !important">Hola ' . $nombre . ' ' . $apellido . '</p>
-                                                                                                                <p style="line-height: 150% !important">Gracias por confiarnos tus datos:</p>
-                                                                                                                <p style="line-height: 150% !important">
-                                                                                                                    Tu <b style="color: #002545">IMC</b> es de ' . $result . ' que corresponde a la categoría
-                                                                                                                    ' . $categoria . '
-                                                                                                                </p>
-                                                                                                            </td>
-                                                                                                        </tr>
-                                                                                                    </tbody>
-                                                                                                </table>
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                    </tbody>
-                                                                                </table>
-                                                                            </td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td class="esd-structure es-p20t es-p20r es-p20l" align="left">
-                                                                                <table cellpadding="0" cellspacing="0">
-                                                                                    <tbody>
-                                                                                        <tr>
-                                                                                            <td width="560" class="esd-container-frame" align="left">
-                                                                                                <table cellpadding="0" cellspacing="0" width="100%" role="presentation">
-                                                                                                    <tbody>
-                                                                                                        <tr>
-                                                                                                            <td align="left" class="esd-block-text">
-                                                                                                                <p align="center" style="color: #002545">
-                                                                                                                    <em
-                                                                                                                        ><i
-                                                                                                                            >El índice de masa corporal es la relación de tu peso con tu estatura.</i
-                                                                                                                        ></em
-                                                                                                                    >
-                                                                                                                </p>
-                                                                                                                <p align="center" style="color: #002545">
-                                                                                                                    <em
-                                                                                                                        ><i
-                                                                                                                            ><i
-                                                                                                                                >Es el indicador más confiable para saber si tienes sobrepeso o ya estás en
-                                                                                                                                obesidad.</i
-                                                                                                                            ></i
-                                                                                                                        ></em
-                                                                                                                    >
-                                                                                                                </p>
-                                                                                                                <p>
-                                                                                                                    <em><i>​</i></em>
-                                                                                                                </p>
-                                                                                                            </td>
-                                                                                                        </tr>
-                                                                                                    </tbody>
-                                                                                                </table>
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                    </tbody>
-                                                                                </table>
-                                                                            </td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td class="esd-structure es-p20t es-p20r es-p20l" align="left">
-                                                                                <table cellpadding="0" cellspacing="0">
-                                                                                    <tbody>
-                                                                                        <tr>
-                                                                                            <td width="560" class="esd-container-frame" align="left">
-                                                                                                <table cellpadding="0" cellspacing="0" width="100%" role="presentation">
-                                                                                                    <tbody>
-                                                                                                        <tr>
-                                                                                                            <td align="center" class="esd-block-image" style="font-size: 0">
-                                                                                                                <a target="_blank">
-                                                                                                                    <img
-                                                                                                                        src="https://appweb.bclinik.com/img/img_correos/imc.png"
-                                                                                                                        alt=""
-                                                                                                                        width="421"
-                                                                                                                        class="adapt-img"
-                                                                                                                    />
-                                                                                                                </a>
-                                                                                                            </td>
-                                                                                                        </tr>
-                                                                                                    </tbody>
-                                                                                                </table>
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                    </tbody>
-                                                                                </table>
-                                                                            </td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td class="esd-structure es-p20t es-p20r es-p20l" align="left">
-                                                                                <table cellpadding="0" cellspacing="0">
-                                                                                    <tbody>
-                                                                                        <tr>
-                                                                                            <td width="560" class="esd-container-frame" align="left">
-                                                                                                <table cellpadding="0" cellspacing="0" width="100%" role="presentation">
-                                                                                                    <tbody>
-                                                                                                        <tr>
-                                                                                                            <td align="left" class="esd-block-text">
-                                                                                                                <ul>
-                                                                                                                    <li>
-                                                                                                                        <p>
-                                                                                                                            <em
-                                                                                                                                ><span style="color: #f1c232">Entre 25 a 29.99</span> &nbsp;es sobrepeso
-                                                                                                                                también llamado pre obesidad.
-                                                                                                                            </em>
-                                                                                                                        </p>
-                                                                                                                    </li>
-                                                                                                                    <li>
-                                                                                                                        <p>
-                                                                                                                            <em
-                                                                                                                                ><span style="color: #ff9900">Entre 30 a 34.99</span> estás a tiempo de
-                                                                                                                                retroceder categorías y llegar a lo normal.
-                                                                                                                            </em>
-                                                                                                                        </p>
-                                                                                                                    </li>
-                                                                                                                    <li>
-                                                                                                                        <p>
-                                                                                                                            <em
-                                                                                                                                ><span style="color: #ff0000">Entre 35 a 39.99</span> estas a tiempo de
-                                                                                                                                retroceder categorías y evitar el Síndrome Metabólico.
-                                                                                                                            </em>
-                                                                                                                        </p>
-                                                                                                                    </li>
-                                                                                                                    <li>
-                                                                                                                        <p style="line-height: 150% !important" align="left">
-                                                                                                                            <em
-                                                                                                                                ><span style="color: #990000">Mayor de 40</span> no solo puedes retroceder
-                                                                                                                                categorías, además, controlas el Síndrome Metabólico que haya aparecido:
-                                                                                                                                (Obesidad, Diabetes, Hipertensión, Colesterol y Triglicéridos altos).</em
-                                                                                                                            >
-                                                                                                                        </p>
-                                                                                                                    </li>
-                                                                                                                </ul>
-                                                                                                            </td>
-                                                                                                        </tr>
-                                                                                                    </tbody>
-                                                                                                </table>
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                    </tbody>
-                                                                                </table>
-                                                                            </td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td class="esd-structure es-p20t es-p20r es-p20l" align="left">
-                                                                                <table cellpadding="0" cellspacing="0">
-                                                                                    <tbody>
-                                                                                        <tr>
-                                                                                            <td width="560" class="esd-container-frame" align="left">
-                                                                                                <table cellpadding="0" cellspacing="0" width="100%" role="presentation">
-                                                                                                    <tbody>
-                                                                                                        <tr>
-                                                                                                            <td align="left" class="esd-block-text">
-                                                                                                                <p style="color: #002545"><strong>Interpretación de resultados</strong></p>
-                                                                                                                <p style="color: #666666" align="justify">
-                                                                                                                    La OMS Organización Mundial de la Salud, establece que una definición comúnmente
-                                                                                                                    en uso con los siguientes valores, acordados en 1997, publicados en 2000 y
-                                                                                                                    ajustados en 2010.
-                                                                                                                </p>
-                                                                                                                <p style="color: #002545"><strong>​</strong></p>
-                                                                                                            </td>
-                                                                                                        </tr>
-                                                                                                    </tbody>
-                                                                                                </table>
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                    </tbody>
-                                                                                </table>
-                                                                            </td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td class="esd-structure es-p20t es-p20r es-p20l" align="left">
-                                                                                <table cellpadding="0" cellspacing="0">
-                                                                                    <tbody>
-                                                                                        <tr>
-                                                                                            <td width="560" class="esd-container-frame" align="left">
-                                                                                                <table cellpadding="0" cellspacing="0" width="100%" role="presentation">
-                                                                                                    <tbody>
-                                                                                                        <tr>
-                                                                                                            <td align="center" class="esd-block-image" style="font-size: 0">
-                                                                                                                <a target="_blank">
-                                                                                                                    <img
-                                                                                                                        src="https://appweb.bclinik.com/img/img_correos/tabla.png"
-                                                                                                                        alt=""
-                                                                                                                        width="560"
-                                                                                                                        class="adapt-img"
-                                                                                                                    />
-                                                                                                                </a>
-                                                                                                            </td>
-                                                                                                        </tr>
-                                                                                                    </tbody>
-                                                                                                </table>
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                    </tbody>
-                                                                                </table>
-                                                                            </td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td class="esd-structure es-p20t es-p20r es-p20l" align="left">
-                                                                                <table cellpadding="0" cellspacing="0">
-                                                                                    <tbody>
-                                                                                        <tr>
-                                                                                            <td width="560" class="esd-container-frame" align="left">
-                                                                                                <table cellpadding="0" cellspacing="0" width="100%" role="presentation">
-                                                                                                    <tbody>
-                                                                                                        <tr>
-                                                                                                            <td align="left" class="esd-block-text">
-                                                                                                                <p align="justify">
-                                                                                                                    Un resultado de IMC igual o mayor a 25 es el inicio del sobrepeso también
-                                                                                                                    llamado pre-obesidad, la antesala del Síndrome Metabólico.
-                                                                                                                </p>
-                                                                                                                &nbsp;
-                                                                                                                <ul>
-                                                                                                                    <li>
-                                                                                                                        <p style="line-height: 130% !important" align="justify">
-                                                                                                                            Ahora que conoces tu índice de masa corporal y la categoría en la que estás,
-                                                                                                                            debes conocer:
-                                                                                                                        </p>
-                                                                                                                    </li>
-                                                                                                                    <li>
-                                                                                                                        <p style="line-height: 130% !important" align="justify">
-                                                                                                                            Tu composición corporal (cuanto tienes de grasa, masa muscular, huesos y 10
-                                                                                                                            indicadores más).
-                                                                                                                        </p>
-                                                                                                                    </li>
-                                                                                                                    <li>
-                                                                                                                        <p style="line-height: 130% !important" align="justify">
-                                                                                                                            Cuál es tu índice de cintura talla y medidas de volumen.
-                                                                                                                        </p>
-                                                                                                                    </li>
-                                                                                                                    <li>
-                                                                                                                        <p style="line-height: 130% !important" align="justify">
-                                                                                                                            Cómo están tus indicadores metabólicos de grasa (azúcar, colesterol y
-                                                                                                                            triglicéridos). Tener un diagnóstico de tu estado de salud metabólico.
-                                                                                                                        </p>
-                                                                                                                    </li>
-                                                                                                                    <li>
-                                                                                                                        <p style="line-height: 130% !important" align="justify">
-                                                                                                                            Saber cómo puedes perder peso y grasa sostenido para acelerar tu metabolismo.
-                                                                                                                        </p>
-                                                                                                                    </li>
-                                                                                                                </ul>
-                                                                                                                <p style="line-height: 130% !important" align="justify">
-                                                                                                                    <b
-                                                                                                                        >Si deseas conocer más sobre tu metabolismo, agenda tu cita para hacerte tu
-                                                                                                                        evaluación personalizada y con los resultados podemos sugerirte 2 opciones:</b
-                                                                                                                    >
-                                                                                                                </p>
-                                                                                                            </td>
-                                                                                                        </tr>
-                                                                                                    </tbody>
-                                                                                                </table>
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                    </tbody>
-                                                                                </table>
-                                                                            </td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td class="esd-structure es-p20t es-p20r es-p20l" align="left">
-                                                                                <table cellpadding="0" cellspacing="0">
-                                                                                    <tbody>
-                                                                                        <tr>
-                                                                                            <td width="560" class="esd-container-frame" align="left">
-                                                                                                <table cellpadding="0" cellspacing="0" width="100%" role="presentation">
-                                                                                                    <tbody>
-                                                                                                        <tr>
-                                                                                                            <td align="left" class="esd-block-text">
-                                                                                                                <p>1. Realiza un <strong style="color: #002545">Metabograma</strong></p>
-                                                                                                                <ul>
-                                                                                                                    <li>
-                                                                                                                        <p align="justify" style="  text-align: justify;">
-                                                                                                                            Obtén un análisis exhaustivo y personalizado de tu metabolismo. Incluye
-                                                                                                                            historial médico, composición corporal, antropometría y pruebas de laboratorio
-                                                                                                                            avanzadas, todo para una visión completa de tu salud.
-                                                                                                                        </p>
-                                                                                                                    </li>
-                                                                                                                </ul>
-                                                                                                                <p>
-                                                                                                                    2.Únete al
-                                                                                                                    <strong style="color: #002545">Programa Aceleración Metabólica PAM</strong>
-                                                                                                                </p>
-                                                                                                                <ul>
-                                                                                                                    <li>
-                                                                                                                        <p align="justify">
-                                                                                                                            Participa en un programa específico diseñado para acelerar tu metabolismo y
-                                                                                                                            reducir grasa-peso de manera permanente y sostenible.
-                                                                                                                        </p>
-                                                                                                                    </li>
-                                                                                                                </ul>
-                                                                                                                <p><b>Agenda tu cita ahora:</b></p>
-                                                                                                                <p>​</p>
-                                                                                                            </td>
-                                                                                                        </tr>
-                                                                                                    </tbody>
-                                                                                                </table>
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                    </tbody>
-                                                                                </table>
-                                                                            </td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td class="esd-structure" align="left">
-                                                                                <!--[if mso]><table width="600" cellpadding="0" cellspacing="0"><tr><td width="67" valign="top"><![endif]-->
-                                                                                <table cellpadding="0" cellspacing="0" class="es-left" align="left">
-                                                                                    <tbody>
-                                                                                        <tr>
-                                                                                            <td width="67" class="esd-container-frame" align="left">
-                                                                                                <table cellpadding="0" cellspacing="0" width="100%" role="presentation">
-                                                                                                    <tbody>
-                                                                                                        <tr>
-                                                                                                            <td align="right" class="esd-block-image" style="font-size: 0">
-                                                                                                                <a target="_blank">
-                                                                                                                    <img src="https://appweb.bclinik.com/img/img_correos/whatsapp.png" alt="" width="40" />
-                                                                                                                </a>
-                                                                                                            </td>
-                                                                                                        </tr>
-                                                                                                    </tbody>
-                                                                                                </table>
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                    </tbody>
-                                                                                </table>
-
-                                                                                <!--[if mso]></td><td width="533" valign="top"><![endif]-->
-                                                                                <table cellpadding="0" cellspacing="0" class="es-right" align="right">
-                                                                                    <tbody>
-                                                                                        <tr>
-                                                                                            <td width="533" class="esd-container-frame" align="left">
-                                                                                                <table cellpadding="0" cellspacing="0" width="100%" role="presentation">
-                                                                                                    <tbody>
-                                                                                                        <tr>
-                                                                                                            <td align="left" class="esd-block-text">
-                                                                                                                <p style="color: #002545" align="left">
-                                                                                                                    <b
-                                                                                                                        >Whatsapp:
-                                                                                                                        <a style="color: #1b85dd" target="_blank" href="https://wa.link/d8atu5"
-                                                                                                                            >3324-3501</a
-                                                                                                                        ></b
-                                                                                                                    >
-                                                                                                                </p>
-                                                                                                            </td>
-                                                                                                        </tr>
-                                                                                                    </tbody>
-                                                                                                </table>
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                    </tbody>
-                                                                                </table>
-                                                                                <!--[if mso]></td></tr></table><![endif]-->
-                                                                            </td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td class="esd-structure es-p20t es-p20r es-p20l" align="left">
-                                                                                <table cellpadding="0" cellspacing="0">
-                                                                                    <tbody>
-                                                                                        <tr>
-                                                                                            <td width="560" class="esd-container-frame" align="left">
-                                                                                                <table cellpadding="0" cellspacing="0" width="100%" role="presentation">
-                                                                                                    <tbody>
-                                                                                                        <tr>
-                                                                                                            <td align="left" class="esd-block-text">
-                                                                                                                <p><b>Ubícanos en:</b></p>
-                                                                                                                <ul>
-                                                                                                                    <li style="color: #333333">
-                                                                                                                        <p style="color: #333333">
-                                                                                                                            <a target="_blank" style="text-decoration: none; color: #333333" 	href="https://www.google.com/search?q=bio+clinik+zona+10">
-
-                                                                                                                                    <stron>Edificio 01010 - Zona 10</stron></a
-                                                                                                                            >
-                                                                                                                        </p>
-                                                                                                                    </li>
-                                                                                                                </ul>
-                                                                                                                <p><b>​</b></p>
-                                                                                                            </td>
-                                                                                                        </tr>
-                                                                                                    </tbody>
-                                                                                                </table>
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                    </tbody>
-                                                                                </table>
-                                                                            </td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td class="esd-structure es-p20t es-p20r es-p20l" align="left">
-                                                                                <table cellpadding="0" cellspacing="0">
-                                                                                    <tbody>
-                                                                                        <tr>
-                                                                                            <td width="560" class="esd-container-frame" align="left">
-                                                                                                <table cellpadding="0" cellspacing="0" width="100%" role="presentation">
-                                                                                                    <tbody>
-                                                                                                        <tr>
-                                                                                                            <td align="center" class="esd-block-image" style="font-size: 0">
-                                                                                                                <a target="_blank">
-                                                                                                                    <img
-                                                                                                                        src="https://appweb.bclinik.com/img/img_correos/footer.png"
-                                                                                                                        alt=""
-                                                                                                                        width="560"
-                                                                                                                        class="adapt-img"
-                                                                                                                    />
-                                                                                                                </a>
-                                                                                                            </td>
-                                                                                                        </tr>
-                                                                                                    </tbody>
-                                                                                                </table>
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                    </tbody>
-                                                                                </table>
-                                                                            </td>
-                                                                        </tr>
-                                                                    </tbody>
-                                                                </table>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </body>
-                    </html>
+            $this->emailService->sendEmail($recipient, $subject, $view, $emailData, $attachments);
 
 
-            ';
-
-            $mail->Subject = 'Resultado IMC';
-            $mail->isHTML(true);
-            $mail->MsgHTML($body);
-
-            $mail->addStringAttachment($pdfContent, 'Respuesta_Calculadora_IMC.pdf');
-
-
-            if (!$mail->send()) {
-                throw new \Exception('Error al enviar el correo: ' . $mail->ErrorInfo);
-            }
             return response()->json(['status' => 'success']);
         } catch (\Exception $e) {
             Log::error('Error al procesar datos del webhook: ' . $e->getMessage());

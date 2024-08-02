@@ -3,21 +3,28 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Services\EmailService;
 
 class EmailServiceProvider extends ServiceProvider
 {
     /**
-     * Register services.
+     * Register any application services.
+     *
+     * @return void
      */
-    public function register(): void
+    public function register()
     {
-        //
+        $this->app->singleton(EmailService::class, function ($app) {
+            return new EmailService();
+        });
     }
 
     /**
-     * Bootstrap services.
+     * Bootstrap any application services.
+     *
+     * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         //
     }

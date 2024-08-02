@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
 use PDF;
 use App\Models\FormularioImc;
+use App\Models\FormularioImcInvitados;
+
 
 class ImcWebhookController extends Controller
 {
@@ -66,6 +68,27 @@ class ImcWebhookController extends Controller
     {
 
 
+        $encryptedId = $request->query('id');
+        $decryptedId = Crypt::decryptString($encryptedId);
+        $invitados = FormularioImcInvitados::findOrFail($decryptedId);
+
+        $dataToPDF = [
+            'date' => date('d-m-Y'),
+            'nombre' => $invitados->nombre,
+            'apellido' => $invitados->apellido,
+            'nombre_invitado' => $invitados->nombre_invitado,
+            'apellido_invitado' => $invitados->apellido_invitado,
+            'correo' => $invitados->correo,
+            'telefono' => $invitados->telefono,
+            'fecha' => $invitados->fecha,
+            'hora' => $invitados->hora,
+            'form_id' => $invitados->form_id,
+        ];
+
+        $pdf = PDF::loadView('pdf.imc_invitacion', $dataToPDF);
+        return $pdf->download('Invitacion IMC.pdf');
+
+
     }
     public function handle(Request $request)
     {
@@ -106,8 +129,8 @@ class ImcWebhookController extends Controller
             ];
 
             // Crear nuevo registro
-            $newUser = Imc_Formulario::create($dataToLog);
-            $encryptedId = Crypt::encryptString($newUser->id);
+            $newFormulario = Imc_Formulario::create($dataToLog);
+            $encryptedId = Crypt::encryptString($newFormulario->id);
             $link = url('/pdf/download/imc_formulario') . '?id=' . urlencode($encryptedId);
 
             // Preparar datos para PDF
@@ -120,6 +143,10 @@ class ImcWebhookController extends Controller
                 'link' => $link
             ];
 
+
+
+
+
             $pdf = PDF::loadView('pdf.imc_formulario', $dataToPDF);
             $pdfContent = $pdf->output();
 
@@ -127,209 +154,102 @@ class ImcWebhookController extends Controller
 
             // Preparar y enviar el correo electrónico
             $recipient = $data['Correo:'];
-            $subject = 'Resultado IMC';
+            $subject = 'Calculadora IMC';
             $view = 'emails.imc_formulario';
             $emailData = $dataToPDF;
             $attachments = [
                 ['content' => $pdfContent, 'name' => 'Respuesta_Calculadora_IMC.pdf']
             ];
 
-            $this->emailService->sendEmail($recipient, $subject, $view, $emailData, $attachments);
+            $fromName = 'Calculadora IMC'; // Dynamic value
+            $replyToName = 'Calculadora IMC';
+            $this->emailService->sendEmail($recipient, $subject, $view, $emailData, $attachments, 'noreply@bclinik.com', $fromName, 'noreply@bclinik.com', $replyToName);
 
 
-            return response()->json(['status' => 'success']);
+            //return response()->json(['status' => 'success']);
         } catch (\Exception $e) {
             Log::error('Error al procesar datos del webhook: ' . $e->getMessage());
             return response()->json(['status' => 'error', 'message' => 'Error al procesar los datos del webhook'], 500);
         }
     }
     public function handleImcInvitacion(Request $request)
-    {
-        try {
-            $data = $request->all();
+        {
+            try {
+                // Retrieve all necessary input data from the request
+                $data = $request->only([
+                    'Tu_Nombre',
+                    'Nombre_Referido',
+                    'Telefono_Referido',
+                    'Email_Referido',
+                    'form_id'
+                ]);
 
-            $nombre = $request->input('Tu_Nombre');
-            $nombre_invitado = $request->input('Nombre_Referido');
-            $telefono_referido = $request->input('Telefono_Referido');
-            $email_referido = $request->input('Email_Referido');
-            $form_id = $request->input('form_id');
+                // Extract individual variables for clarity
+                $nombre = $data['Tu_Nombre'];
+                $nombre_invitado = $data['Nombre_Referido'];
+                $telefono_referido = $data['Telefono_Referido'];
+                $email_referido = $data['Email_Referido'];
+                $form_id = $data['form_id'];
 
-            $dataToSave = [
-                'nombre' => $nombre,
-                'apellido' => '',
-                'nombre_invitado' => $nombre_invitado,
-                'apellido_invitado' => '',
-                'correo' => $email_referido,
-                'telefono' => $telefono_referido,
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s'),
-                'form_id' => $form_id
-            ];
-            $newImc_invitacion = Imc_Invitacion::create($dataToSave);
-            $encryptedId = Crypt::encryptString($newImc_invitacion->id);
-            $link = url('/pdf/download/imc_invitado') . '?id=' . urlencode($encryptedId);
-            $fechaFormateada = Carbon::parse(date('Y-m-d'))->format('d/m/Y');
+                // Prepare data to save in the database
+                $dataToSave = [
+                    'nombre' => $nombre,
+                    'apellido' => '',
+                    'nombre_invitado' => $nombre_invitado,
+                    'apellido_invitado' => '',
+                    'correo' => $email_referido,
+                    'telefono' => $telefono_referido,
+                    'fecha' => now()->format('Y-m-d'),
+                    'hora' => now()->format('H:i:s'),
+                    'form_id' => $form_id
+                ];
 
+                // Save the data and create a new Imc_Invitacion record
+                $newImc_invitacion = Imc_Invitacion::create($dataToSave);
 
-            $mail = new PHPMailer(true);
-            $mail->CharSet = 'UTF-8';
-            $mail->isSMTP();
-            $mail->Host = 'bclinik.com';
-            $mail->Port = 465;
-            $mail->SMTPSecure = 'ssl';
-            $mail->SMTPAuth = true;
-            $mail->Username = 'noreply@bclinik.com';
-            $mail->Password = 'Password$001';
-            $mail->setFrom('noreply@bclinik.com', 'Invitación Calculadora IMC');
-            $mail->addReplyTo('noreply@bclinik.com', 'Invitación Calculadora IMC');
-            $mail->addAddress($email_referido);
+                // Encrypt the ID and create a link for the invitation
+                $encryptedId = Crypt::encryptString($newImc_invitacion->id);
+                $link = url('/pdf/download/imc_invitado') . '?id=' . urlencode($encryptedId);
 
+                // Format the date for the email
+                $fechaFormateada = now()->format('d/m/Y');
 
-            $body = '
-                    <html dir="ltr" lang="en">
-                        <head>
-                            <meta charset="UTF-8" />
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-                            <title>Invitación</title>
-                            <link rel="preconnect" href="https://fonts.googleapis.com" />
-                            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
-                            <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400&display=swap" rel="stylesheet" />
-                            <style>
-                                body {
-                                    font-family: "Lato", sans-serif;
-                                    margin: 0;
-                                    padding: 0;
-                                    background-color: #ffffff;
-                                }
-                                table {
-                                    border-spacing: 0;
-                                    border-collapse: collapse;
-                                }
-                                img {
-                                    border: 0;
-                                    display: block;
-                                }
-                                p {
-                                    margin: 0;
-                                    padding: 10px 0;
-                                }
-                                a {
-                                    color: #11455d;
-                                    text-decoration: none;
-                                }
-                            </style>
-                            <!--[if mso]>
-                                        <style type="text/css">
-                                            ul {
-                                        margin: 0 !important;
-                                        }
-                                        ol {
-                                        margin: 0 !important;
-                                        }
-                                        li {
-                                        margin-left: 47px !important;
-                                        }
+                // Prepare email data for the Blade view
+                $emailData = [
+                    'date' => $fechaFormateada,
+                    'nombre' => $nombre,
+                    'apellido' => '',
+                    'nombre_invitado' => $nombre_invitado,
+                    'apellido_invitado' => '',
+                    'correo' => $email_referido,
+                    'telefono' => $telefono_referido,
+                    'link' => $link,
+                ];
 
-                                            </style><![endif]
-                                            -->
-                        </head>
-                        <body class="body">
-                            <table width="100%" bgcolor="#ffffff" cellpadding="0" cellspacing="0" border="0">
-                                <tbody>
-                                    <tr>
-                                        <td align="center">
-                                            <table width="600" cellpadding="0" cellspacing="0" border="0" style="color: #595959;">
-                                                <tbody>
-                                                    <tr>
-                                                        <td>
-                                                            <img src="https://appweb.bclinik.com/img/img_correos/header.png" alt="header" width="600" style="max-width: 100%;" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr esd-text="true" class="esd-text">
-                                                        <td align="right" style="padding: 10px;">
-                                                            <p style="line-height: 150% !important; color: #002545" align="right">Fecha: ' . $fechaFormateada . '</p>
-                                                            <p style="line-height: 150% !important; color: #002545" align="right"><a href="' . $link . '" style="display: inline-block; padding: 1px 15px; margin-left: 10px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">Descargar</a></p>
-                                                                                                                
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style="padding: 10px;" esd-text="true" class="esd-text">
-                                                            <p>Hola ' . $nombre_invitado . '</p>
-                                                            <p>Tu amigo ' . $nombre . ', nos ha solicitado que te enviemos esta información.</p>
-                                                            <p style="color: #11455d; text-align: center;">¿Quieres saber si tu peso es adecuado para tu edad?</p>
-                                                            <p style="color: #11455d; text-align: center;">¿Si tu metabolismo está lento?</p>
-                                                            <p style="color: #11455d; text-align: center;">¿Cuál es la causa principal por la que subes de peso?</p>
-                                                            <p style="color: #11455d; text-align: center;">¿Qué es lo que no te deja bajar de peso?</p>
-                                                        </td>
-                                                    </tr>
-                                                    <tr esd-text="true" class="esd-text">
-                                                        <td style="padding: 10px; text-align: center;">Averígualo ingresa a <a href="https://bclinik.com/imc/">www.bclinik.com/imc</a></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td align="center" style="padding: 20px 0;">
-                                                            <img src="https://appweb.bclinik.com/img/img_correos/imc.png" alt="imc" width="540" style="max-width: 90%;" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style="padding: 10px;" esd-text="true" class="esd-text">
-                                                            <ul style="list-style-type: none; padding: 0;">
-                                                                <li style="padding: 5px 0;">
-                                                                    <em><strong style="color: #f1c232;">Entre 25 a 29.99</strong> es sobrepeso también llamado <span style="color: #11455d;">pre obesidad.</span></em>
-                                                                </li>
-                                                                <li style="padding: 5px 0;">
-                                                                    <em><strong style="color: #ff9900;">Entre 30 a 34.99</strong> estás a tiempo de retroceder categorías y llegar a lo normal.</em>
-                                                                </li>
-                                                                <li style="padding: 5px 0;">
-                                                                    <em><strong style="color: #ff0000;">Entre 35 a 39.99</strong> estás a tiempo de retroceder categorías y evitar el Síndrome Metabólico.</em>
-                                                                </li>
-                                                                <li style="padding: 5px 0;">
-                                                                    <em>
-                                                                        <strong style="color: #990000;">Mayor de 40</strong> no solo puedes retroceder categorías, además, controlas el Síndrome Metabólico que haya aparecido: <br />
-                                                                        (Obesidad, Diabetes, Hipertensión, Colesterol y Triglicéridos altos).
-                                                                    </em>
-                                                                </li>
-                                                            </ul>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style="padding: 10px;" esd-text="true" class="esd-text">
-                                                            <p><strong>Ubícanos en:</strong></p>
-                                                            <p>
-                                                                <a
-                                                                    href="https://www.google.com/search?q=bio+clinik+zona+10&rlz=1C1UEAD_enGT1090GT1090&oq=bio+clinik+zona+10&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIJCAEQIRgKGKABMgkIAhAhGAoYoAHSAQgzNTU0ajBqN6gCALACAA&sourceid=chrome&ie=UTF-8"
-                                                                >
-                                                                    Edificio 01010 - Zona 10
-                                                                </a>
-                                                            </p>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <img src="https://appweb.bclinik.com/img/img_correos/footer.png" alt="footer" width="600" style="max-width: 100%;" />
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </body>
-                    </html>
+                // Generate PDF content
+                $pdf = PDF::loadView('pdf.imc_invitacion', $emailData);
+                $pdfContent = $pdf->output();
 
+                // Prepare and send the email
+                $recipient = $email_referido;
+                $subject = 'Invitación Calculadora IMC';
+                $view = 'emails.imc_invitacion';
+                $attachments = [
+                    ['content' => $pdfContent, 'name' => 'Invitacion_Calculadora_IMC.pdf']
+                ];
 
-                ';
-            $mail->Subject = 'Invitación Calculadora IMC';
-            $mail->isHTML(true);
-            $mail->MsgHTML($body);
+                $fromName = 'Invitación Calculadora IMC'; // Dynamic value
+                $replyToName = 'Invitación Calculadora IMC'; // Dynamic value
 
-            if (!$mail->send()) {
-                throw new \Exception('Error al enviar el correo: ' . $mail->ErrorInfo);
+                $this->emailService->sendEmail($recipient, $subject, $view, $emailData, $attachments, 'noreply@bclinik.com', $fromName, 'noreply@bclinik.com', $replyToName);
+
+               //  return response()->json(['status' => 'success']);
+            } catch (\Exception $e) {
+                // Log the error and return an error response
+                Log::error('Error al procesar datos del webhook: ' . $e->getMessage());
+                return response()->json(['status' => 'error', 'message' => 'Error al procesar los datos del webhook'], 500);
             }
-
-        } catch (\Exception $e) {
-            Log::error('Error al procesar datos del webhook: ' . $e->getMessage());
-            return response()->json(['status' => 'error', 'message' => 'Error al procesar los datos del webhook'], 500);
         }
-    }
+
+
 }

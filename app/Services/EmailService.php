@@ -7,8 +7,17 @@ use PHPMailer\PHPMailer\Exception;
 
 class EmailService
 {
-    public function sendEmail($recipient, $subject, $view, $data = [], $attachments = [], $fromEmail = 'noreply@bclinik.com', $fromName = 'Calculadora IMC', $replyToEmail = 'noreply@bclinik.com', $replyToName = 'Calculadora IMC')
-    {
+    public function sendEmail(
+        $recipient,
+        $subject,
+        $view,
+        $data = [],
+        $attachments = [],
+        $fromEmail = 'noreply@bclinik.com',
+        $fromName,
+        $replyToEmail = 'noreply@bclinik.com',
+        $replyToName
+    ) {
         $mail = new PHPMailer(true);
         $mail->CharSet = 'UTF-8';
         $mail->isSMTP();
@@ -38,4 +47,5 @@ class EmailService
             throw new \Exception('Error al enviar el correo: ' . $mail->ErrorInfo);
         }
     }
+
 }

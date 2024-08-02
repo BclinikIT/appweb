@@ -258,6 +258,9 @@ export default {
                                             Cintura en cms
                                             </th>
                                             <th class="px-3 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                            Imc
+                                            </th>
+                                            <th class="px-3 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                             Agua diaria
                                             </th>
                                             <th class="px-3 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
@@ -335,6 +338,8 @@ export default {
                                             <td class="px-3 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.empresa }}</td>
                                             <td class="px-3 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.sede }}</td>
                                             <td class="px-3 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.cintura_en_cms }}</td>
+                                            <td class="px-3 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.imc }}</td>
+
                                             <td class="px-3 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.agua_diaria }}</td>
                                             <td class="px-3 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.horarios_refacciones_comidas }}</td>
                                             <td class="px-3 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.porciones_pequenas }}</td>
@@ -443,7 +448,16 @@ const handleSearch = () => {
 };
 
 const datosFiltrados = computed(() => {
-    let filteredData = props.datos;
+    // Agregar un nuevo objeto imc al array
+    let filteredData = props.datos.map((dato) => {
+    let peso_r = dato.peso_en_libras / 2.20462;
+    let talla = dato.altura_en_cms / 100;
+    let tallas_r = talla * talla;
+    let imc = Math.round((peso_r / tallas_r) * 100) / 100;
+
+    // Retornar el nuevo objeto con el IMC calculado
+    return { ...dato, imc };
+});
 
     // Aplicar filtro por género
     if (filtroGenero.value) {

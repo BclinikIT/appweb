@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitación</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Lato", sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            color: #595959;
+            padding: 10px;
+        }
+        .header img, .footer img {
+            width: 100%;
+            max-width: 600px;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .content img {
+            width: 90%;
+            max-width: 540px;
+        }
+        p {
+            margin: 0;
+            padding: 10px 0;
+        }
+        a {
+            color: #11455d;
+            text-decoration: none;
+        }
+        .list-item {
+            padding: 5px 0;
+        }
+        .highlight-yellow { color: #F1C232; }
+        .highlight-orange { color: #FF9900; }
+        .highlight-red { color: #FF0000; }
+        .highlight-darkred { color: #990000; }
+    </style>
+</head>
+<body class="body">
+    <div class="container">
+        <div class="header">
+            <img src="https://appweb.bclinik.com/img/img_correos/header.png" alt="header">
+        </div>
+        <div class="text-right">
+            <p>Fecha: {{ $date }}</p>
+        </div>
+        <div class="content">
+            <p>Hola {{ $nombre_invitado }} {{ $apellido_invitado }}</p>
+            <p>Tu amigo {{ $nombre }} {{ $apellido }}, nos ha solicitado que te enviemos esta información.</p>
+            <p class="text-center" style="color:#11455d;">¿Quieres saber si tu peso es adecuado para tu edad?</p>
+            <p class="text-center" style="color:#11455d;">¿Si tu metabolismo está lento?</p>
+            <p class="text-center" style="color:#11455d;">¿Cuál es la causa principal por la que subes de peso?</p>
+            <p class="text-center" style="color:#11455d;">¿Qué es lo que no te deja bajar de peso?</p>
+            <p class="text-center">Averígualo ingresa a <a href="https://bclinik.com/imc/">www.bclinik.com/imc</a></p>
+            <div class="text-center">
+                <img src="https://appweb.bclinik.com/img/img_correos/imc.png" alt="imc">
+            </div>
+            <ul style="list-style-type: none; padding: 0;">
+                <li class="list-item"><em><strong class="highlight-yellow">Entre 25 a 29.99</strong> es sobrepeso también llamado <span style="color:#11455d;">pre obesidad.</span></em></li>
+                <li class="list-item"><em><strong class="highlight-orange">Entre 30 a 34.99</strong> estás a tiempo de retroceder categorías y llegar a lo normal.</em></li>
+                <li class="list-item"><em><strong class="highlight-red">Entre 35 a 39.99</strong> estás a tiempo de retroceder categorías y evitar el Síndrome Metabólico.</em></li>
+                <li class="list-item"><em><strong class="highlight-darkred">Mayor de 40</strong> no solo puedes retroceder categorías, además, controlas el Síndrome Metabólico que haya aparecido: <br>(Obesidad, Diabetes, Hipertensión, Colesterol y Triglicéridos altos).</em></li>
+            </ul>
+            <p><strong>Ubícanos en:</strong></p>
+            <p><a href="https://www.google.com/search?q=bio+clinik+zona+10&rlz=1C1UEAD_enGT1090GT1090&oq=bio+clinik+zona+10&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIJCAEQIRgKGKABMgkIAhAhGAoYoAHSAQgzNTU0ajBqN6gCALACAA&sourceid=chrome&ie=UTF-8">Edificio 01010 - Zona 10</a></p>
+        </div>
+        <div class="footer">
+            <img src="https://appweb.bclinik.com/img/img_correos/footer.png" alt="footer">
+        </div>
+    </div>
+</body>
+</html>

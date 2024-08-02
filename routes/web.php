@@ -2,21 +2,19 @@
 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\FormularioImcController;
-use App\Http\Controllers\FormularioImcInvitadosController;
-
 use Inertia\Inertia;
-use App\Http\Controllers\ImcWebhookController;
-use App\Http\Controllers\CribadoWebhookController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\CribadoController;
-use App\Http\Controllers\CribadoEncuestaWebhookController;
-use App\Http\Controllers\EncuestaCribadoController;
-use App\Models\EncuestaCribado;
+use App\Http\Controllers\{
+    FormularioImcController,
+    FormularioImcInvitadosController,
+    ImcWebhookController,
+    CribadoWebhookController,
+    UserController,
+    CribadoController,
+    CribadoEncuestaWebhookController,
+    EncuestaCribadoController,
+};
 
-use App\Http\Controllers\PDFController;
-
-
+// Home Route
 Route::get('/', function () {
     return Inertia::render('Auth/Login', [
         'canLogin' => Route::has('login'),
@@ -26,44 +24,48 @@ Route::get('/', function () {
     ]);
 });
 
+// Authenticated Routes
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
+    // Dashboard
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
-    Route::resource('/formularioimc', FormularioImcController::class);
-    Route::resource('/formularioimcinvitados', FormularioImcInvitadosController::class);
-    Route::resource('/cribado-form-cotizacion', CribadoController::class);
-    Route::resource('/encuesta', EncuestaCribadoController::class);
+    // Resource Routes
+    Route::resources([
+        '/imc-formulario' => FormularioImcController::class,
+        '/imc-formulario-invitados' => FormularioImcInvitadosController::class,
+        '/cribado-form-cotizacion' => CribadoController::class,
+        '/encuesta' => EncuestaCribadoController::class,
+        '/users' => UserController::class,
+    ]);
 
-    Route::resource('/users', UserController::class);
-
+    // User Routes
     Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+});
 
+// Webhook Routes
+Route::prefix('webhook')->group(function () {
+    Route::post('/imc_formulario', [ImcWebhookController::class, 'handle']);
+    Route::post('/imc_invitacion', [ImcWebhookController::class, 'handleImcInvitacion']);
 
+    Route::post('/cribado_encuesta', [CribadoEncuestaWebhookController::class, 'handleCribadoEncuesta']);
+    Route::get('/cribado_encuesta_download', [CribadoEncuestaWebhookController::class, 'pdf']);
 
-
+    Route::post('/cribado_cotizacion', [CribadoWebhookController::class, 'handleCribadoCotizacion']);
+    Route::get('/cribado_cotizacion_download', [CribadoEncuestaWebhookController::class, 'pdf']);
 });
 
 
-Route::get('webhook/imc_download', [ImcWebhookController::class, 'pdf']);
-Route::post('webhook/imc_formulario', [ImcWebhookController::class, 'handle']);
-Route::post('webhook/imc_invitacion', [ImcWebhookController::class, 'handleImcInvitacion']);
 
-Route::post('webhook/cribado_encuesta', [CribadoEncuestaWebhookController::class, 'handleCribadoEncuesta']);
-Route::get('webhook/cribado_encuesta_download', [CribadoEncuestaWebhookController::class, 'pdf']);
-
-Route::post('webhook/cribado_cotizacion', [CribadoWebhookController::class, 'handleCribadoCotizacion']);
-Route::get('webhook/cribado_cotizacion_download', [CribadoEncuestaWebhookController::class, 'pdf']);
-
-Route::get('/generate-pdf', [PDFController::class, 'generatePDF']);
+Route::prefix('pdf/download')->group(function()
+{
+    Route::get('/imc_formulario', [ImcWebhookController::class, 'pdf']);
 
 
-Route::get('/vista-encuesta', function () {
-    return view('pdf.cribado_encuesta');
 });

@@ -23,16 +23,11 @@ class CribadoEncuestaWebhookController extends Controller
     public function handleCribadoEncuesta(Request $request)
     {
 
-        // Captura de datos
-        // Registrar los datos para inspección posterior
-        // Log::info('Datos de la solicitud:', $request->all());
-
-            // return response()->json($request->all(), 500);
 
         try {
 
-            
-            
+
+
 
              // Extraer los datos de los campos del formulario
              $nombre = $request->input('fields.name.value');
@@ -46,28 +41,28 @@ class CribadoEncuestaWebhookController extends Controller
              $peso_en_libras = $request->input('fields.peso_en_libras.value');
              $altura_en_cms = $request->input('fields.altura_en_cms.value');
              $cintura_en_cms = $request->input('fields.cintura_en_cms.value');
- 
+
              $agua_diaria = $request->input('fields.agua_diaria.value');
              $horarios_refacciones_comidas = $request->input('fields.horarios_refacciones_comidas.value');
              $porciones_pequenas = $request->input('fields.porciones_pequenas.value');
              $separar_combinar_alimentos = $request->input('fields.separar_combinar_alimentos.value');
              $rutina_ejercicio = $request->input('fields.rutina_ejercicio.value');
              $vivir_saludable = $request->input('fields.vivir_saludable.value');
- 
+
              $insulina_alta = $request->input('fields.insulina_alta.value');
              $resistencia_insulina = $request->input('fields.resistencia_insulina.value');
              $elevaciones_azucar_embarazo = $request->input('fields.elevaciones_azucar_embarazo.value');
              $sindrome_ovarios_poliquistico = $request->input('fields.sindrome_ovarios_poliquistico.value');
 
 
- 
+
 
 
              $sobrepeso = $request->input('fields.sobrepeso.value');
              $diabetes_embarazo_hijo = $request->input('fields.diabetes_embarazo_hijo.value');
              $ejercicio_regular = $request->input('fields.ejercicio_regular.value');
              $ovario_poliquistico = $request->input('fields.ovario_poliquistico.value');
- 
+
              $padre = $request->input('fields.padre.value');
              $madre = $request->input('fields.madre.value');
              $hermanos = $request->input('fields.hermanos.value');
@@ -113,7 +108,7 @@ class CribadoEncuestaWebhookController extends Controller
                 }
             }
 
-            $sumatoria = asignarValor($agua_diaria) + asignarValor($horarios_refacciones_comidas) + asignarValor($porciones_pequenas) + 
+            $sumatoria = asignarValor($agua_diaria) + asignarValor($horarios_refacciones_comidas) + asignarValor($porciones_pequenas) +
             asignarValor($separar_combinar_alimentos) + asignarValor($rutina_ejercicio) + asignarValor($vivir_saludable);
 
             // Determinar el nivel de riesgo
@@ -121,11 +116,11 @@ class CribadoEncuestaWebhookController extends Controller
                 $nivel = '<p style="color: red;font-size: 2em;font-weight: bold;">Alto</p>';
             } elseif ($sumatoria >= 6 && $sumatoria <= 10) {
                 $nivel = '<p style="color: #d7d436;font-size: 2em;font-weight: bold;">Medio</p>';
-                
+
             } else {
                 $nivel = '<p style="color: #76b82a;font-size: 2em;font-weight: bold;">Bajo</p>';
             }
-            
+
 
             if ($result < 25) {
                 $habitos_costumbre_riesgos = '<p style="color: #76b82a;font-size: 2em;font-weight: bold;">Bajo</p>
@@ -144,7 +139,7 @@ class CribadoEncuestaWebhookController extends Controller
                                                 <p>¡Debes cambiar tu Estilo de Vida!<br type="_moz"></p>
                                                 <p>Tienes el metabolismo lento<br type="_moz"></p>';
             }
-            
+
 
 
 
@@ -168,7 +163,7 @@ class CribadoEncuestaWebhookController extends Controller
             $antecedentesPorcentaje=0;
             $factoresPorcentaje=0;
             $hereditariosPorcentaje=0;
-        
+
             $promedio=0;
             $porcentajePromedio=0;
 
@@ -188,7 +183,7 @@ class CribadoEncuestaWebhookController extends Controller
             if (strtolower($abuelos_maternos) == 'si' || strtolower($abuelos_paternos) == 'si') {
                 $hereditariorsTotal += 20;
             }
-            
+
 
             if($antecedentesTotal>95){
                 $antecedentesPorcentaje=95;
@@ -210,23 +205,23 @@ class CribadoEncuestaWebhookController extends Controller
                 $hereditariosPorcentaje=$hereditariorsTotal;
             }
 
-                    
+
             $promedio=$antecedentesTotal+$factoresTotales+$hereditariosPorcentaje;
             $porcentajePromedio=round($promedio/3, 2);
             $porcentajePromedioFinal=0;
-        
+
             if($porcentajePromedio>95)
             {
-        
+
                 $porcentajePromedioFinal=95;
-        
+
             }
             else {
                 $porcentajePromedioFinal=$porcentajePromedio;
             }
-            
-           
- 
+
+
+
              $dataToInsert = [
                  'nombre' => $nombre,
                  'apellido' => $apellido,
@@ -239,24 +234,24 @@ class CribadoEncuestaWebhookController extends Controller
                  'peso_en_libras' => $peso_en_libras,
                  'altura_en_cms' => $altura_en_cms,
                  'cintura_en_cms' => $cintura_en_cms,
-                 
+
                  'agua_diaria' => $agua_diaria,
                  'horarios_refacciones_comidas' => $horarios_refacciones_comidas,
                  'porciones_pequenas' => $porciones_pequenas,
                  'separar_combinar_alimentos' => $separar_combinar_alimentos,
                  'rutina_ejercicio' => $rutina_ejercicio,
                  'vivir_saludable' => $vivir_saludable,
- 
+
                  'insulina_alta' => $insulina_alta,
                  'resistencia_insulina' => $resistencia_insulina,
                  'elevaciones_azucar_embarazo' => $elevaciones_azucar_embarazo,
                  'sindrome_ovarios_poliquistico' => $sindrome_ovarios_poliquistico,
- 
+
                  'sobrepeso' => $sobrepeso,
                  'diabetes_embarazo_hijo' => $diabetes_embarazo_hijo,
                  'ejercicio_regular' => $ejercicio_regular,
                  'ovario_poliquistico' => $ovario_poliquistico,
- 
+
                  'padre' => $padre,
                  'madre' => $madre,
                  'hermanos' => $hermanos,
@@ -265,12 +260,34 @@ class CribadoEncuestaWebhookController extends Controller
                  'abuelos_maternos' => $abuelos_maternos,
                  'abuelos_paternos' => $abuelos_paternos,
              ];
- 
- 
- 
+
+
+
+
             $newEncuesta = EncuestaCribado::create($dataToInsert);
             $encryptedId = Crypt::encryptString($newEncuesta->id);
             $link = url('/webhook/cribado_encuesta_download') . '?id=' . urlencode($encryptedId);
+
+
+             /* llama a la plantilla blade de pdf encuesta */
+
+             $dataToPDF=[
+                'nombre' => $nombre,
+                'apellido' => $apellido,
+                'imc' => $result,
+                'categoria' => $categoria,
+                'sumatoria' => $sumatoria,
+
+                'antecedentes_familiares'=>$antecedentesPorcentaje,
+                'factores_riesgo'=>$factoresPorcentaje,
+                'factores_hereditarios'=>$hereditariosPorcentaje,
+                'promedio'=>$porcentajePromedioFinal
+             ];
+
+             $pdf = PDF::loadView('pdf.cribado_encuesta', $dataToPDF);
+             $pdfContent = $pdf->output();
+
+
 
 
             $mail = new PHPMailer(true);
@@ -285,7 +302,7 @@ class CribadoEncuestaWebhookController extends Controller
             $mail->setFrom('noreply@bclinik.com', 'Respuesta Encuesta Cribado');
             $mail->addReplyTo('noreply@bclinik.com', 'Respuesta Encuesta Cribado');
             $mail->addAddress($correo);
-           
+
             $body = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
                     <html dir="ltr" xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office">
 
@@ -303,917 +320,917 @@ class CribadoEncuestaWebhookController extends Controller
                         <![endif]-->
                         <!--[if gte mso 9]><style>sup { font-size: 100% !important; }</style><![endif]-->
                         <!--[if gte mso 9]>
-                    <xml>
-                        <o:OfficeDocumentSettings>
-                        <o:AllowPNG></o:AllowPNG>
-                        <o:PixelsPerInch>96</o:PixelsPerInch>
-                        </o:OfficeDocumentSettings>
-                    </xml>
+                        <xml>
+                            <o:OfficeDocumentSettings>
+                            <o:AllowPNG></o:AllowPNG>
+                            <o:PixelsPerInch>96</o:PixelsPerInch>
+                            </o:OfficeDocumentSettings>
+                        </xml>
                     <![endif]-->
                     </head>
                     <style>
                         /* CONFIG STYLES Please do not delete and edit CSS styles below */
-                    /* IMPORTANT THIS STYLES MUST BE ON FINAL EMAIL */
-                    .rollover:hover .rollover-first {
-                        max-height: 0px !important;
-                        display: none !important;
-                    }
-
-                    .rollover:hover .rollover-second {
-                        max-height: none !important;
-                        display: block !important;
-                    }
-
-                    .rollover span {
-                        font-size: 0px;
-                    }
-
-                    u+.body img~div div {
-                        display: none;
-                    }
-
-                    #outlook a {
-                        padding: 0;
-                    }
-
-                    span.MsoHyperlink,
-                    span.MsoHyperlinkFollowed {
-                        color: inherit;
-                        mso-style-priority: 99;
-                    }
-
-                    a.es-button {
-                        mso-style-priority: 100 !important;
-                        text-decoration: none !important;
-                    }
-
-                    a[x-apple-data-detectors] {
-                        color: inherit !important;
-                        text-decoration: none !important;
-                        font-size: inherit !important;
-                        font-family: inherit !important;
-                        font-weight: inherit !important;
-                        line-height: inherit !important;
-                    }
-
-                    .es-desk-hidden {
-                        display: none;
-                        float: left;
-                        overflow: hidden;
-                        width: 0;
-                        max-height: 0;
-                        line-height: 0;
-                        mso-hide: all;
-                    }
-
-                    .es-button-border:hover>a.es-button {
-                        color: #ffffff !important;
-                    }
-
-                    /*
-                    END OF IMPORTANT
-                    */
-                    body {
-                        width: 100%;
-                        height: 100%;
-                    }
-
-                    table {
-                        mso-table-lspace: 0pt;
-                        mso-table-rspace: 0pt;
-                        border-collapse: collapse;
-                        border-spacing: 0px;
-                    }
-
-                    table td,
-                    body,
-                    .es-wrapper {
-                        padding: 0;
-                        Margin: 0;
-                    }
-
-                    .es-content,
-                    .es-header,
-                    .es-footer {
-                        width: 100%;
-                        table-layout: fixed !important;
-                    }
-
-                    img {
-                        display: block;
-                        font-size: 14px;
-                        border: 0;
-                        outline: none;
-                        text-decoration: none;
-                    }
-
-                    p,
-                    hr {
-                        Margin: 0;
-                    }
-
-                    h1,
-                    h2,
-                    h3,
-                    h4,
-                    h5,
-                    h6 {
-                        Margin: 0;
-                        font-family: arial, "helvetica neue", helvetica, sans-serif;
-                        mso-line-height-rule: exactly;
-                        letter-spacing: 0;
-                    }
-
-                    p,
-                    a {
-                        mso-line-height-rule: exactly;
-                    }
-
-                    .es-left {
-                        float: left;
-                    }
-
-                    .es-right {
-                        float: right;
-                    }
-
-                    .es-p5 {
-                        padding: 5px;
-                    }
-
-                    .es-p5t {
-                        padding-top: 5px;
-                    }
-
-                    .es-p5b {
-                        padding-bottom: 5px;
-                    }
-
-                    .es-p5l {
-                        padding-left: 5px;
-                    }
-
-                    .es-p5r {
-                        padding-right: 5px;
-                    }
-
-                    .es-p10 {
-                        padding: 10px;
-                    }
-
-                    .es-p10t {
-                        padding-top: 10px;
-                    }
-
-                    .es-p10b {
-                        padding-bottom: 10px;
-                    }
-
-                    .es-p10l {
-                        padding-left: 10px;
-                    }
-
-                    .es-p10r {
-                        padding-right: 10px;
-                    }
-
-                    .es-p15 {
-                        padding: 15px;
-                    }
-
-                    .es-p15t {
-                        padding-top: 15px;
-                    }
-
-                    .es-p15b {
-                        padding-bottom: 15px;
-                    }
-
-                    .es-p15l {
-                        padding-left: 15px;
-                    }
-
-                    .es-p15r {
-                        padding-right: 15px;
-                    }
-
-                    .es-p20 {
-                        padding: 20px;
-                    }
-
-                    .es-p25 {
-                        padding: 25px;
-                    }
-
-                    .es-p25t {
-                        padding-top: 25px;
-                    }
-
-                    .es-p25b {
-                        padding-bottom: 25px;
-                    }
-
-                    .es-p25l {
-                        padding-left: 25px;
-                    }
-
-                    .es-p25r {
-                        padding-right: 25px;
-                    }
-
-                    .es-p30 {
-                        padding: 30px;
-                    }
-
-                    .es-p30t {
-                        padding-top: 30px;
-                    }
-
-                    .es-p30b {
-                        padding-bottom: 30px;
-                    }
-
-                    .es-p30l {
-                        padding-left: 30px;
-                    }
-
-                    .es-p30r {
-                        padding-right: 30px;
-                    }
-
-                    .es-p35 {
-                        padding: 35px;
-                    }
-
-                    .es-p35t {
-                        padding-top: 35px;
-                    }
-
-                    .es-p35b {
-                        padding-bottom: 35px;
-                    }
-
-                    .es-p35l {
-                        padding-left: 35px;
-                    }
-
-                    .es-p35r {
-                        padding-right: 35px;
-                    }
-
-                    .es-p40 {
-                        padding: 40px;
-                    }
-
-                    .es-p40t {
-                        padding-top: 40px;
-                    }
-
-                    .es-p40b {
-                        padding-bottom: 40px;
-                    }
-
-                    .es-p40l {
-                        padding-left: 40px;
-                    }
-
-                    .es-p40r {
-                        padding-right: 40px;
-                    }
-
-                    .es-menu td {
-                        border: 0;
-                    }
-
-                    .es-menu td a img {
-                        display: inline !important;
-                        vertical-align: middle;
-                    }
-
-                    /*
-                    END CONFIG STYLES
-                    */
-                    s {
-                        text-decoration: line-through;
-                    }
-
-                    ul,
-                    ol {
-                        font-family: arial, "helvetica neue", helvetica, sans-serif;
-                        padding: 0px 0px 0px 40px;
-                        margin: 15px 0px;
-                    }
-
-                    ul li {
-                        color: #333333;
-                    }
-
-                    ol li {
-                        color: #333333;
-                    }
-
-                    li {
-                        margin: 0px 0px 15px;
-                        font-size: 14px;
-                    }
-
-                    a {
-                        text-decoration: underline;
-                    }
-
-                    .es-menu td a {
-                        font-family: arial, "helvetica neue", helvetica, sans-serif;
-                        text-decoration: none;
-                        display: block;
-                    }
-
-                    .es-wrapper {
-                        width: 100%;
-                        height: 100%;
-                        background-repeat: repeat;
-                        background-position: center top;
-                    }
-
-                    .es-wrapper-color,
-                    .es-wrapper {
-                        background-color: #f6f6f6;
-                    }
-
-                    .es-content-body p,
-                    .es-footer-body p,
-                    .es-header-body p,
-                    .es-infoblock p {
-                        font-family: arial, "helvetica neue", helvetica, sans-serif;
-                        line-height: 150%;
-                        letter-spacing: 0;
-                    }
-
-                    .es-header {
-                        background-color: transparent;
-                        background-repeat: repeat;
-                        background-position: center top;
-                    }
-
-                    .es-header-body {
-                        background-color: #ffffff;
-                    }
-
-                    .es-header-body p {
-                        color: #333333;
-                        font-size: 14px;
-                    }
-
-                    .es-header-body a {
-                        color: #2cb543;
-                        font-size: 14px;
-                    }
-
-                    .es-content-body {
-                        background-color: #ffffff;
-                    }
-
-                    .es-content-body a {
-                        color: #2cb543;
-                        font-size: 14px;
-                    }
-
-                    .es-footer {
-                        background-color: transparent;
-                        background-repeat: repeat;
-                        background-position: center top;
-                    }
-
-                    .es-footer-body {
-                        background-color: #ffffff;
-                    }
-
-                    .es-footer-body p {
-                        color: #333333;
-                        font-size: 14px;
-                    }
-
-                    .es-footer-body a {
-                        color: #2cb543;
-                        font-size: 14px;
-                    }
-
-                    .es-content-body p {
-                        color: #333333;
-                        font-size: 14px;
-                    }
-
-                    .es-infoblock p {
-                        font-size: 12px;
-                        color: #cccccc;
-                    }
-
-                    .es-infoblock a {
-                        font-size: 12px;
-                        color: #cccccc;
-                    }
-
-                    h1 {
-                        font-size: 30px;
-                        font-style: normal;
-                        font-weight: normal;
-                        line-height: 120%;
-                        color: #333333;
-                    }
-
-                    h2 {
-                        font-size: 24px;
-                        font-style: normal;
-                        font-weight: normal;
-                        line-height: 120%;
-                        color: #333333;
-                    }
-
-                    h3 {
-                        font-size: 20px;
-                        font-style: normal;
-                        font-weight: normal;
-                        line-height: 120%;
-                        color: #333333;
-                    }
-
-                    .es-header-body h1 a,
-                    .es-content-body h1 a,
-                    .es-footer-body h1 a {
-                        font-size: 30px;
-                    }
-
-                    .es-header-body h2 a,
-                    .es-content-body h2 a,
-                    .es-footer-body h2 a {
-                        font-size: 24px;
-                    }
-
-                    .es-header-body h3 a,
-                    .es-content-body h3 a,
-                    .es-footer-body h3 a {
-                        font-size: 20px;
-                    }
-
-                    h4 {
-                        font-size: 24px;
-                        font-style: normal;
-                        font-weight: normal;
-                        line-height: 120%;
-                        color: #333333;
-                    }
-
-                    h5 {
-                        font-size: 20px;
-                        font-style: normal;
-                        font-weight: normal;
-                        line-height: 120%;
-                        color: #333333;
-                    }
-
-                    h6 {
-                        font-size: 16px;
-                        font-style: normal;
-                        font-weight: normal;
-                        line-height: 120%;
-                        color: #333333;
-                    }
-
-                    .es-header-body h4 a,
-                    .es-content-body h4 a,
-                    .es-footer-body h4 a {
-                        font-size: 24px;
-                    }
-
-                    .es-header-body h5 a,
-                    .es-content-body h5 a,
-                    .es-footer-body h5 a {
-                        font-size: 20px;
-                    }
-
-                    .es-header-body h6 a,
-                    .es-content-body h6 a,
-                    .es-footer-body h6 a {
-                        font-size: 16px;
-                    }
-
-                    a.es-button,
-                    button.es-button {
-                        padding: 10px 20px 10px 20px;
-                        display: inline-block;
-                        background: #31cb4b;
-                        border-radius: 30px 30px 30px 30px;
-                        font-size: 18px;
-                        font-family: arial, "helvetica neue", helvetica, sans-serif;
-                        font-weight: normal;
-                        font-style: normal;
-                        line-height: 120%;
-                        color: #ffffff;
-                        text-decoration: none !important;
-                        width: auto;
-                        text-align: center;
-                        letter-spacing: 0;
-                        mso-padding-alt: 0;
-                        mso-border-alt: 10px solid #31cb4b;
-                    }
-
-                    .es-button-border {
-                        border-style: solid;
-                        border-color: #2cb543 #2cb543 #2cb543 #2cb543;
-                        background: #31cb4b;
-                        border-width: 0px 0px 2px 0px;
-                        display: inline-block;
-                        border-radius: 30px 30px 30px 30px;
-                        width: auto;
-                        mso-hide: all;
-                    }
-
-                    .es-button img {
-                        display: inline-block;
-                        vertical-align: middle;
-                    }
-
-                    .es-fw,
-                    .es-fw .es-button {
-                        display: block;
-                    }
-
-                    .es-il,
-                    .es-il .es-button {
-                        display: inline-block;
-                    }
-
-                    .es-text-rtl h1,
-                    .es-text-rtl h2,
-                    .es-text-rtl h3,
-                    .es-text-rtl h4,
-                    .es-text-rtl h5,
-                    .es-text-rtl h6,
-                    .es-text-rtl input,
-                    .es-text-rtl label,
-                    .es-text-rtl textarea,
-                    .es-text-rtl p,
-                    .es-text-rtl ol,
-                    .es-text-rtl ul,
-                    .es-text-rtl .es-menu a,
-                    .es-text-rtl .es-table {
-                        direction: rtl;
-                    }
-
-                    .es-text-ltr h1,
-                    .es-text-ltr h2,
-                    .es-text-ltr h3,
-                    .es-text-ltr h4,
-                    .es-text-ltr h5,
-                    .es-text-ltr h6,
-                    .es-text-ltr input,
-                    .es-text-ltr label,
-                    .es-text-ltr textarea,
-                    .es-text-ltr p,
-                    .es-text-ltr ol,
-                    .es-text-ltr ul,
-                    .es-text-ltr .es-menu a,
-                    .es-text-ltr .es-table {
-                        direction: ltr;
-                    }
-
-                    .es-text-rtl ol,
-                    .es-text-rtl ul {
-                        padding: 0px 40px 0px 0px;
-                    }
-
-                    .es-text-ltr ul,
-                    .es-text-ltr ol {
-                        padding: 0px 0px 0px 40px;
-                    }
-
-                    /*
-                    RESPONSIVE STYLES
-                    Please do not delete and edit CSS styles below.
-
-                    If you don"t need responsive layout, please delete this section.
-                    */
-                    .es-p20t {
-                        padding-top: 20px;
-                    }
-
-                    .es-p20r {
-                        padding-right: 20px;
-                    }
-
-                    .es-p20l {
-                        padding-left: 20px;
-                    }
-
-                    .es-p20b {
-                        padding-bottom: 20px;
-                    }
-
-                    .es-p-default {
-                        padding-top: 20px;
-                        padding-right: 20px;
-                        padding-bottom: 0px;
-                        padding-left: 20px;
-                    }
-
-                    .msohide {
-                        mso-hide: all;
-                    }
-
-                    @media only screen and (max-width: 600px) {
-                        h1 {
-                            font-size: 30px !important;
-                            text-align: left;
-                        }
-
-                        h2 {
-                            font-size: 24px !important;
-                            text-align: left;
-                        }
-
-                        h3 {
-                            font-size: 20px !important;
-                            text-align: left;
-                        }
-
-                        .es-m-p20b {
-                            padding-bottom: 20px !important;
-                        }
-
-                        *[class="gmail-fix"] {
-                            display: none !important;
-                        }
-
-                        p,
-                        a {
-                            line-height: 150% !important;
-                        }
-
-                        h1,
-                        h1 a {
-                            line-height: 120% !important;
-                        }
-
-                        h2,
-                        h2 a {
-                            line-height: 120% !important;
-                        }
-
-                        h3,
-                        h3 a {
-                            line-height: 120% !important;
-                        }
-
-                        h4,
-                        h4 a {
-                            line-height: 120% !important;
-                        }
-
-                        h5,
-                        h5 a {
-                            line-height: 120% !important;
-                        }
-
-                        h6,
-                        h6 a {
-                            line-height: 120% !important;
-                        }
-
-                        h4 {
-                            font-size: 24px !important;
-                            text-align: left;
-                        }
-
-                        h5 {
-                            font-size: 20px !important;
-                            text-align: left;
-                        }
-
-                        h6 {
-                            font-size: 16px !important;
-                            text-align: left;
-                        }
-
-                        .es-header-body h1 a,
-                        .es-content-body h1 a,
-                        .es-footer-body h1 a {
-                            font-size: 30px !important;
-                        }
-
-                        .es-header-body h2 a,
-                        .es-content-body h2 a,
-                        .es-footer-body h2 a {
-                            font-size: 24px !important;
-                        }
-
-                        .es-header-body h3 a,
-                        .es-content-body h3 a,
-                        .es-footer-body h3 a {
-                            font-size: 20px !important;
-                        }
-
-                        .es-header-body h4 a,
-                        .es-content-body h4 a,
-                        .es-footer-body h4 a {
-                            font-size: 24px !important;
-                        }
-
-                        .es-header-body h5 a,
-                        .es-content-body h5 a,
-                        .es-footer-body h5 a {
-                            font-size: 20px !important;
-                        }
-
-                        .es-header-body h6 a,
-                        .es-content-body h6 a,
-                        .es-footer-body h6 a {
-                            font-size: 16px !important;
-                        }
-
-                        .es-menu td a {
-                            font-size: 14px !important;
-                        }
-
-                        .es-header-body p,
-                        .es-header-body a {
-                            font-size: 14px !important;
-                        }
-
-                        .es-content-body p,
-                        .es-content-body a {
-                            font-size: 14px !important;
-                        }
-
-                        .es-footer-body p,
-                        .es-footer-body a {
-                            font-size: 14px !important;
-                        }
-
-                        .es-infoblock p,
-                        .es-infoblock a {
-                            font-size: 12px !important;
-                        }
-
-                        .es-m-txt-c,
-                        .es-m-txt-c h1,
-                        .es-m-txt-c h2,
-                        .es-m-txt-c h3,
-                        .es-m-txt-c h4,
-                        .es-m-txt-c h5,
-                        .es-m-txt-c h6 {
-                            text-align: center !important;
-                        }
-
-                        .es-m-txt-r,
-                        .es-m-txt-r h1,
-                        .es-m-txt-r h2,
-                        .es-m-txt-r h3,
-                        .es-m-txt-r h4,
-                        .es-m-txt-r h5,
-                        .es-m-txt-r h6 {
-                            text-align: right !important;
-                        }
-
-                        .es-m-txt-j,
-                        .es-m-txt-j h1,
-                        .es-m-txt-j h2,
-                        .es-m-txt-j h3,
-                        .es-m-txt-j h4,
-                        .es-m-txt-j h5,
-                        .es-m-txt-j h6 {
-                            text-align: justify !important;
-                        }
-
-                        .es-m-txt-l,
-                        .es-m-txt-l h1,
-                        .es-m-txt-l h2,
-                        .es-m-txt-l h3,
-                        .es-m-txt-l h4,
-                        .es-m-txt-l h5,
-                        .es-m-txt-l h6 {
-                            text-align: left !important;
-                        }
-
-                        .es-m-txt-r img,
-                        .es-m-txt-c img,
-                        .es-m-txt-l img {
-                            display: inline !important;
-                        }
-
-                        .es-m-txt-r .rollover:hover .rollover-second,
-                        .es-m-txt-c .rollover:hover .rollover-second,
-                        .es-m-txt-l .rollover:hover .rollover-second {
-                            display: inline !important;
-                        }
-
-                        .es-m-txt-r .rollover span,
-                        .es-m-txt-c .rollover span,
-                        .es-m-txt-l .rollover span {
-                            line-height: 0 !important;
-                            font-size: 0 !important;
-                        }
-
-                        .es-spacer {
-                            display: inline-table;
-                        }
-
-                        a.es-button,
-                        button.es-button {
-                            font-size: 18px !important;
-                            line-height: 120% !important;
-                        }
-
-                        a.es-button,
-                        button.es-button,
-                        .es-button-border {
-                            display: inline-block !important;
-                        }
-
-                        .es-m-fw,
-                        .es-m-fw.es-fw,
-                        .es-m-fw .es-button {
-                            display: block !important;
-                        }
-
-                        .es-m-il,
-                        .es-m-il .es-button,
-                        .es-social,
-                        .es-social td,
-                        .es-menu {
-                            display: inline-block !important;
-                        }
-
-                        .es-adaptive table,
-                        .es-left,
-                        .es-right {
-                            width: 100% !important;
-                        }
-
-                        .es-content table,
-                        .es-header table,
-                        .es-footer table,
-                        .es-content,
-                        .es-footer,
-                        .es-header {
-                            width: 100% !important;
-                            max-width: 600px !important;
-                        }
-
-                        .adapt-img {
-                            width: 100% !important;
-                            height: auto !important;
-                        }
-
-                        .es-mobile-hidden,
-                        .es-hidden {
-                            display: none !important;
-                        }
-
-                        .es-desk-hidden {
-                            width: auto !important;
-                            overflow: visible !important;
-                            float: none !important;
-                            max-height: inherit !important;
-                            line-height: inherit !important;
-                            display: table-row !important;
-                        }
-
-                        tr.es-desk-hidden {
-                            display: table-row !important;
-                        }
-
-                        table.es-desk-hidden {
-                            display: table !important;
-                        }
-
-                        td.es-desk-menu-hidden {
-                            display: table-cell !important;
-                        }
-
-                        .es-menu td {
-                            width: 1% !important;
-                        }
-
-                        table.es-table-not-adapt,
-                        .esd-block-html table {
-                            width: auto !important;
-                        }
-
-                        .es-social td {
-                            padding-bottom: 10px;
-                        }
-
-                        .h-auto {
-                            height: auto !important;
-                        }
-                    }
-
-                    /*
-                    END RESPONSIVE STYLES
-                    */
-                    ul li,
-                    ol li {
-                        margin-left: 0;
-                    }
+                            /* IMPORTANT THIS STYLES MUST BE ON FINAL EMAIL */
+                            .rollover:hover .rollover-first {
+                                max-height: 0px !important;
+                                display: none !important;
+                            }
+
+                            .rollover:hover .rollover-second {
+                                max-height: none !important;
+                                display: block !important;
+                            }
+
+                            .rollover span {
+                                font-size: 0px;
+                            }
+
+                            u+.body img~div div {
+                                display: none;
+                            }
+
+                            #outlook a {
+                                padding: 0;
+                            }
+
+                            span.MsoHyperlink,
+                            span.MsoHyperlinkFollowed {
+                                color: inherit;
+                                mso-style-priority: 99;
+                            }
+
+                            a.es-button {
+                                mso-style-priority: 100 !important;
+                                text-decoration: none !important;
+                            }
+
+                            a[x-apple-data-detectors] {
+                                color: inherit !important;
+                                text-decoration: none !important;
+                                font-size: inherit !important;
+                                font-family: inherit !important;
+                                font-weight: inherit !important;
+                                line-height: inherit !important;
+                            }
+
+                            .es-desk-hidden {
+                                display: none;
+                                float: left;
+                                overflow: hidden;
+                                width: 0;
+                                max-height: 0;
+                                line-height: 0;
+                                mso-hide: all;
+                            }
+
+                            .es-button-border:hover>a.es-button {
+                                color: #ffffff !important;
+                            }
+
+                            /*
+                            END OF IMPORTANT
+                            */
+                            body {
+                                width: 100%;
+                                height: 100%;
+                            }
+
+                            table {
+                                mso-table-lspace: 0pt;
+                                mso-table-rspace: 0pt;
+                                border-collapse: collapse;
+                                border-spacing: 0px;
+                            }
+
+                            table td,
+                            body,
+                            .es-wrapper {
+                                padding: 0;
+                                Margin: 0;
+                            }
+
+                            .es-content,
+                            .es-header,
+                            .es-footer {
+                                width: 100%;
+                                table-layout: fixed !important;
+                            }
+
+                            img {
+                                display: block;
+                                font-size: 14px;
+                                border: 0;
+                                outline: none;
+                                text-decoration: none;
+                            }
+
+                            p,
+                            hr {
+                                Margin: 0;
+                            }
+
+                            h1,
+                            h2,
+                            h3,
+                            h4,
+                            h5,
+                            h6 {
+                                Margin: 0;
+                                font-family: arial, "helvetica neue", helvetica, sans-serif;
+                                mso-line-height-rule: exactly;
+                                letter-spacing: 0;
+                            }
+
+                            p,
+                            a {
+                                mso-line-height-rule: exactly;
+                            }
+
+                            .es-left {
+                                float: left;
+                            }
+
+                            .es-right {
+                                float: right;
+                            }
+
+                            .es-p5 {
+                                padding: 5px;
+                            }
+
+                            .es-p5t {
+                                padding-top: 5px;
+                            }
+
+                            .es-p5b {
+                                padding-bottom: 5px;
+                            }
+
+                            .es-p5l {
+                                padding-left: 5px;
+                            }
+
+                            .es-p5r {
+                                padding-right: 5px;
+                            }
+
+                            .es-p10 {
+                                padding: 10px;
+                            }
+
+                            .es-p10t {
+                                padding-top: 10px;
+                            }
+
+                            .es-p10b {
+                                padding-bottom: 10px;
+                            }
+
+                            .es-p10l {
+                                padding-left: 10px;
+                            }
+
+                            .es-p10r {
+                                padding-right: 10px;
+                            }
+
+                            .es-p15 {
+                                padding: 15px;
+                            }
+
+                            .es-p15t {
+                                padding-top: 15px;
+                            }
+
+                            .es-p15b {
+                                padding-bottom: 15px;
+                            }
+
+                            .es-p15l {
+                                padding-left: 15px;
+                            }
+
+                            .es-p15r {
+                                padding-right: 15px;
+                            }
+
+                            .es-p20 {
+                                padding: 20px;
+                            }
+
+                            .es-p25 {
+                                padding: 25px;
+                            }
+
+                            .es-p25t {
+                                padding-top: 25px;
+                            }
+
+                            .es-p25b {
+                                padding-bottom: 25px;
+                            }
+
+                            .es-p25l {
+                                padding-left: 25px;
+                            }
+
+                            .es-p25r {
+                                padding-right: 25px;
+                            }
+
+                            .es-p30 {
+                                padding: 30px;
+                            }
+
+                            .es-p30t {
+                                padding-top: 30px;
+                            }
+
+                            .es-p30b {
+                                padding-bottom: 30px;
+                            }
+
+                            .es-p30l {
+                                padding-left: 30px;
+                            }
+
+                            .es-p30r {
+                                padding-right: 30px;
+                            }
+
+                            .es-p35 {
+                                padding: 35px;
+                            }
+
+                            .es-p35t {
+                                padding-top: 35px;
+                            }
+
+                            .es-p35b {
+                                padding-bottom: 35px;
+                            }
+
+                            .es-p35l {
+                                padding-left: 35px;
+                            }
+
+                            .es-p35r {
+                                padding-right: 35px;
+                            }
+
+                            .es-p40 {
+                                padding: 40px;
+                            }
+
+                            .es-p40t {
+                                padding-top: 40px;
+                            }
+
+                            .es-p40b {
+                                padding-bottom: 40px;
+                            }
+
+                            .es-p40l {
+                                padding-left: 40px;
+                            }
+
+                            .es-p40r {
+                                padding-right: 40px;
+                            }
+
+                            .es-menu td {
+                                border: 0;
+                            }
+
+                            .es-menu td a img {
+                                display: inline !important;
+                                vertical-align: middle;
+                            }
+
+                            /*
+                            END CONFIG STYLES
+                            */
+                            s {
+                                text-decoration: line-through;
+                            }
+
+                            ul,
+                            ol {
+                                font-family: arial, "helvetica neue", helvetica, sans-serif;
+                                padding: 0px 0px 0px 40px;
+                                margin: 15px 0px;
+                            }
+
+                            ul li {
+                                color: #333333;
+                            }
+
+                            ol li {
+                                color: #333333;
+                            }
+
+                            li {
+                                margin: 0px 0px 15px;
+                                font-size: 14px;
+                            }
+
+                            a {
+                                text-decoration: underline;
+                            }
+
+                            .es-menu td a {
+                                font-family: arial, "helvetica neue", helvetica, sans-serif;
+                                text-decoration: none;
+                                display: block;
+                            }
+
+                            .es-wrapper {
+                                width: 100%;
+                                height: 100%;
+                                background-repeat: repeat;
+                                background-position: center top;
+                            }
+
+                            .es-wrapper-color,
+                            .es-wrapper {
+                                background-color: #f6f6f6;
+                            }
+
+                            .es-content-body p,
+                            .es-footer-body p,
+                            .es-header-body p,
+                            .es-infoblock p {
+                                font-family: arial, "helvetica neue", helvetica, sans-serif;
+                                line-height: 150%;
+                                letter-spacing: 0;
+                            }
+
+                            .es-header {
+                                background-color: transparent;
+                                background-repeat: repeat;
+                                background-position: center top;
+                            }
+
+                            .es-header-body {
+                                background-color: #ffffff;
+                            }
+
+                            .es-header-body p {
+                                color: #333333;
+                                font-size: 14px;
+                            }
+
+                            .es-header-body a {
+                                color: #2cb543;
+                                font-size: 14px;
+                            }
+
+                            .es-content-body {
+                                background-color: #ffffff;
+                            }
+
+                            .es-content-body a {
+                                color: #2cb543;
+                                font-size: 14px;
+                            }
+
+                            .es-footer {
+                                background-color: transparent;
+                                background-repeat: repeat;
+                                background-position: center top;
+                            }
+
+                            .es-footer-body {
+                                background-color: #ffffff;
+                            }
+
+                            .es-footer-body p {
+                                color: #333333;
+                                font-size: 14px;
+                            }
+
+                            .es-footer-body a {
+                                color: #2cb543;
+                                font-size: 14px;
+                            }
+
+                            .es-content-body p {
+                                color: #333333;
+                                font-size: 14px;
+                            }
+
+                            .es-infoblock p {
+                                font-size: 12px;
+                                color: #cccccc;
+                            }
+
+                            .es-infoblock a {
+                                font-size: 12px;
+                                color: #cccccc;
+                            }
+
+                            h1 {
+                                font-size: 30px;
+                                font-style: normal;
+                                font-weight: normal;
+                                line-height: 120%;
+                                color: #333333;
+                            }
+
+                            h2 {
+                                font-size: 24px;
+                                font-style: normal;
+                                font-weight: normal;
+                                line-height: 120%;
+                                color: #333333;
+                            }
+
+                            h3 {
+                                font-size: 20px;
+                                font-style: normal;
+                                font-weight: normal;
+                                line-height: 120%;
+                                color: #333333;
+                            }
+
+                            .es-header-body h1 a,
+                            .es-content-body h1 a,
+                            .es-footer-body h1 a {
+                                font-size: 30px;
+                            }
+
+                            .es-header-body h2 a,
+                            .es-content-body h2 a,
+                            .es-footer-body h2 a {
+                                font-size: 24px;
+                            }
+
+                            .es-header-body h3 a,
+                            .es-content-body h3 a,
+                            .es-footer-body h3 a {
+                                font-size: 20px;
+                            }
+
+                            h4 {
+                                font-size: 24px;
+                                font-style: normal;
+                                font-weight: normal;
+                                line-height: 120%;
+                                color: #333333;
+                            }
+
+                            h5 {
+                                font-size: 20px;
+                                font-style: normal;
+                                font-weight: normal;
+                                line-height: 120%;
+                                color: #333333;
+                            }
+
+                            h6 {
+                                font-size: 16px;
+                                font-style: normal;
+                                font-weight: normal;
+                                line-height: 120%;
+                                color: #333333;
+                            }
+
+                            .es-header-body h4 a,
+                            .es-content-body h4 a,
+                            .es-footer-body h4 a {
+                                font-size: 24px;
+                            }
+
+                            .es-header-body h5 a,
+                            .es-content-body h5 a,
+                            .es-footer-body h5 a {
+                                font-size: 20px;
+                            }
+
+                            .es-header-body h6 a,
+                            .es-content-body h6 a,
+                            .es-footer-body h6 a {
+                                font-size: 16px;
+                            }
+
+                            a.es-button,
+                            button.es-button {
+                                padding: 10px 20px 10px 20px;
+                                display: inline-block;
+                                background: #31cb4b;
+                                border-radius: 30px 30px 30px 30px;
+                                font-size: 18px;
+                                font-family: arial, "helvetica neue", helvetica, sans-serif;
+                                font-weight: normal;
+                                font-style: normal;
+                                line-height: 120%;
+                                color: #ffffff;
+                                text-decoration: none !important;
+                                width: auto;
+                                text-align: center;
+                                letter-spacing: 0;
+                                mso-padding-alt: 0;
+                                mso-border-alt: 10px solid #31cb4b;
+                            }
+
+                            .es-button-border {
+                                border-style: solid;
+                                border-color: #2cb543 #2cb543 #2cb543 #2cb543;
+                                background: #31cb4b;
+                                border-width: 0px 0px 2px 0px;
+                                display: inline-block;
+                                border-radius: 30px 30px 30px 30px;
+                                width: auto;
+                                mso-hide: all;
+                            }
+
+                            .es-button img {
+                                display: inline-block;
+                                vertical-align: middle;
+                            }
+
+                            .es-fw,
+                            .es-fw .es-button {
+                                display: block;
+                            }
+
+                            .es-il,
+                            .es-il .es-button {
+                                display: inline-block;
+                            }
+
+                            .es-text-rtl h1,
+                            .es-text-rtl h2,
+                            .es-text-rtl h3,
+                            .es-text-rtl h4,
+                            .es-text-rtl h5,
+                            .es-text-rtl h6,
+                            .es-text-rtl input,
+                            .es-text-rtl label,
+                            .es-text-rtl textarea,
+                            .es-text-rtl p,
+                            .es-text-rtl ol,
+                            .es-text-rtl ul,
+                            .es-text-rtl .es-menu a,
+                            .es-text-rtl .es-table {
+                                direction: rtl;
+                            }
+
+                            .es-text-ltr h1,
+                            .es-text-ltr h2,
+                            .es-text-ltr h3,
+                            .es-text-ltr h4,
+                            .es-text-ltr h5,
+                            .es-text-ltr h6,
+                            .es-text-ltr input,
+                            .es-text-ltr label,
+                            .es-text-ltr textarea,
+                            .es-text-ltr p,
+                            .es-text-ltr ol,
+                            .es-text-ltr ul,
+                            .es-text-ltr .es-menu a,
+                            .es-text-ltr .es-table {
+                                direction: ltr;
+                            }
+
+                            .es-text-rtl ol,
+                            .es-text-rtl ul {
+                                padding: 0px 40px 0px 0px;
+                            }
+
+                            .es-text-ltr ul,
+                            .es-text-ltr ol {
+                                padding: 0px 0px 0px 40px;
+                            }
+
+                            /*
+                            RESPONSIVE STYLES
+                            Please do not delete and edit CSS styles below.
+
+                            If you don"t need responsive layout, please delete this section.
+                            */
+                            .es-p20t {
+                                padding-top: 20px;
+                            }
+
+                            .es-p20r {
+                                padding-right: 20px;
+                            }
+
+                            .es-p20l {
+                                padding-left: 20px;
+                            }
+
+                            .es-p20b {
+                                padding-bottom: 20px;
+                            }
+
+                            .es-p-default {
+                                padding-top: 20px;
+                                padding-right: 20px;
+                                padding-bottom: 0px;
+                                padding-left: 20px;
+                            }
+
+                            .msohide {
+                                mso-hide: all;
+                            }
+
+                            @media only screen and (max-width: 600px) {
+                                h1 {
+                                    font-size: 30px !important;
+                                    text-align: left;
+                                }
+
+                                h2 {
+                                    font-size: 24px !important;
+                                    text-align: left;
+                                }
+
+                                h3 {
+                                    font-size: 20px !important;
+                                    text-align: left;
+                                }
+
+                                .es-m-p20b {
+                                    padding-bottom: 20px !important;
+                                }
+
+                                *[class="gmail-fix"] {
+                                    display: none !important;
+                                }
+
+                                p,
+                                a {
+                                    line-height: 150% !important;
+                                }
+
+                                h1,
+                                h1 a {
+                                    line-height: 120% !important;
+                                }
+
+                                h2,
+                                h2 a {
+                                    line-height: 120% !important;
+                                }
+
+                                h3,
+                                h3 a {
+                                    line-height: 120% !important;
+                                }
+
+                                h4,
+                                h4 a {
+                                    line-height: 120% !important;
+                                }
+
+                                h5,
+                                h5 a {
+                                    line-height: 120% !important;
+                                }
+
+                                h6,
+                                h6 a {
+                                    line-height: 120% !important;
+                                }
+
+                                h4 {
+                                    font-size: 24px !important;
+                                    text-align: left;
+                                }
+
+                                h5 {
+                                    font-size: 20px !important;
+                                    text-align: left;
+                                }
+
+                                h6 {
+                                    font-size: 16px !important;
+                                    text-align: left;
+                                }
+
+                                .es-header-body h1 a,
+                                .es-content-body h1 a,
+                                .es-footer-body h1 a {
+                                    font-size: 30px !important;
+                                }
+
+                                .es-header-body h2 a,
+                                .es-content-body h2 a,
+                                .es-footer-body h2 a {
+                                    font-size: 24px !important;
+                                }
+
+                                .es-header-body h3 a,
+                                .es-content-body h3 a,
+                                .es-footer-body h3 a {
+                                    font-size: 20px !important;
+                                }
+
+                                .es-header-body h4 a,
+                                .es-content-body h4 a,
+                                .es-footer-body h4 a {
+                                    font-size: 24px !important;
+                                }
+
+                                .es-header-body h5 a,
+                                .es-content-body h5 a,
+                                .es-footer-body h5 a {
+                                    font-size: 20px !important;
+                                }
+
+                                .es-header-body h6 a,
+                                .es-content-body h6 a,
+                                .es-footer-body h6 a {
+                                    font-size: 16px !important;
+                                }
+
+                                .es-menu td a {
+                                    font-size: 14px !important;
+                                }
+
+                                .es-header-body p,
+                                .es-header-body a {
+                                    font-size: 14px !important;
+                                }
+
+                                .es-content-body p,
+                                .es-content-body a {
+                                    font-size: 14px !important;
+                                }
+
+                                .es-footer-body p,
+                                .es-footer-body a {
+                                    font-size: 14px !important;
+                                }
+
+                                .es-infoblock p,
+                                .es-infoblock a {
+                                    font-size: 12px !important;
+                                }
+
+                                .es-m-txt-c,
+                                .es-m-txt-c h1,
+                                .es-m-txt-c h2,
+                                .es-m-txt-c h3,
+                                .es-m-txt-c h4,
+                                .es-m-txt-c h5,
+                                .es-m-txt-c h6 {
+                                    text-align: center !important;
+                                }
+
+                                .es-m-txt-r,
+                                .es-m-txt-r h1,
+                                .es-m-txt-r h2,
+                                .es-m-txt-r h3,
+                                .es-m-txt-r h4,
+                                .es-m-txt-r h5,
+                                .es-m-txt-r h6 {
+                                    text-align: right !important;
+                                }
+
+                                .es-m-txt-j,
+                                .es-m-txt-j h1,
+                                .es-m-txt-j h2,
+                                .es-m-txt-j h3,
+                                .es-m-txt-j h4,
+                                .es-m-txt-j h5,
+                                .es-m-txt-j h6 {
+                                    text-align: justify !important;
+                                }
+
+                                .es-m-txt-l,
+                                .es-m-txt-l h1,
+                                .es-m-txt-l h2,
+                                .es-m-txt-l h3,
+                                .es-m-txt-l h4,
+                                .es-m-txt-l h5,
+                                .es-m-txt-l h6 {
+                                    text-align: left !important;
+                                }
+
+                                .es-m-txt-r img,
+                                .es-m-txt-c img,
+                                .es-m-txt-l img {
+                                    display: inline !important;
+                                }
+
+                                .es-m-txt-r .rollover:hover .rollover-second,
+                                .es-m-txt-c .rollover:hover .rollover-second,
+                                .es-m-txt-l .rollover:hover .rollover-second {
+                                    display: inline !important;
+                                }
+
+                                .es-m-txt-r .rollover span,
+                                .es-m-txt-c .rollover span,
+                                .es-m-txt-l .rollover span {
+                                    line-height: 0 !important;
+                                    font-size: 0 !important;
+                                }
+
+                                .es-spacer {
+                                    display: inline-table;
+                                }
+
+                                a.es-button,
+                                button.es-button {
+                                    font-size: 18px !important;
+                                    line-height: 120% !important;
+                                }
+
+                                a.es-button,
+                                button.es-button,
+                                .es-button-border {
+                                    display: inline-block !important;
+                                }
+
+                                .es-m-fw,
+                                .es-m-fw.es-fw,
+                                .es-m-fw .es-button {
+                                    display: block !important;
+                                }
+
+                                .es-m-il,
+                                .es-m-il .es-button,
+                                .es-social,
+                                .es-social td,
+                                .es-menu {
+                                    display: inline-block !important;
+                                }
+
+                                .es-adaptive table,
+                                .es-left,
+                                .es-right {
+                                    width: 100% !important;
+                                }
+
+                                .es-content table,
+                                .es-header table,
+                                .es-footer table,
+                                .es-content,
+                                .es-footer,
+                                .es-header {
+                                    width: 100% !important;
+                                    max-width: 600px !important;
+                                }
+
+                                .adapt-img {
+                                    width: 100% !important;
+                                    height: auto !important;
+                                }
+
+                                .es-mobile-hidden,
+                                .es-hidden {
+                                    display: none !important;
+                                }
+
+                                .es-desk-hidden {
+                                    width: auto !important;
+                                    overflow: visible !important;
+                                    float: none !important;
+                                    max-height: inherit !important;
+                                    line-height: inherit !important;
+                                    display: table-row !important;
+                                }
+
+                                tr.es-desk-hidden {
+                                    display: table-row !important;
+                                }
+
+                                table.es-desk-hidden {
+                                    display: table !important;
+                                }
+
+                                td.es-desk-menu-hidden {
+                                    display: table-cell !important;
+                                }
+
+                                .es-menu td {
+                                    width: 1% !important;
+                                }
+
+                                table.es-table-not-adapt,
+                                .esd-block-html table {
+                                    width: auto !important;
+                                }
+
+                                .es-social td {
+                                    padding-bottom: 10px;
+                                }
+
+                                .h-auto {
+                                    height: auto !important;
+                                }
+                            }
+
+                            /*
+                            END RESPONSIVE STYLES
+                            */
+                            ul li,
+                            ol li {
+                                margin-left: 0;
+                            }
                     </style>
 
                     <body class="body">
@@ -1291,10 +1308,10 @@ class CribadoEncuestaWebhookController extends Controller
                                                                                                 <tbody>
                                                                                                     <tr>
                                                                                                         <td align="left" class="esd-block-text">
-                                                                                                            <p>Fecha: '.date('Y/m/d').' <br></p>
+                                                                                                            <p>Fecha: '.date('d-m-Y').' <br></p>
                                                                                                             <p style="line-height: 150% !important; color: #002545" align="right"><a href="' . $link . '" style="display: inline-block; padding: 1px 15px; margin-left: 10px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">Descargar</a></p>
                                                                                                         </td>
-                                                                                                        
+
                                                                                                     </tr>
                                                                                                 </tbody>
                                                                                             </table>
@@ -1830,7 +1847,7 @@ class CribadoEncuestaWebhookController extends Controller
                                                                                                                 <b>Si deseas conocer más sobre tu metabolismo, agenda tu cita para hacerte tu
                                                                                                                     evaluación personalizada y con los resultados podemos sugerirte 2 opciones:</b>
                                                                                                             </p>
-                                                                                                            
+
                                                                                                             <ol>
                                                                                                                 <li><p>Realiza un <strong style="color: #002545">Metabograma</strong></p>
                                                                                                                         Obtén un análisis exhaustivo y personalizado de tu metabolismo. Incluye
@@ -2034,13 +2051,14 @@ class CribadoEncuestaWebhookController extends Controller
 
                     // echo $body;
                     // exit();
-            
+
             $mail->Subject = 'Respuesta Encuesta Cribado';
-            
+
             $mail->isHTML(true);
             $mail->MsgHTML($body);
 
             $mail->Body = $body;
+            $mail->addStringAttachment($pdfContent, 'Respuesta_Encuesta_Cribado.pdf');
 
             if (!$mail->send()) {
                 throw new \Exception('Error al enviar el correo: ' . $mail->ErrorInfo);

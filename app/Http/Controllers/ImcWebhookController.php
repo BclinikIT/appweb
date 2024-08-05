@@ -61,7 +61,7 @@ class ImcWebhookController extends Controller
         ];
 
         $pdf = PDF::loadView('pdf.imc_formulario', $dataToPDF);
-        return $pdf->download('Resultado IMC.pdf');
+        return $pdf->download('Respuesta_Calculadora_IMC.pdf');
     }
 
     public function pdf_imc_invitado(Request $request)
@@ -92,6 +92,13 @@ class ImcWebhookController extends Controller
     }
     public function handle(Request $request)
     {
+        // Aumentar límites de memoria y tiempo de ejecución
+        ini_set('memory_limit', '256M');
+        ini_set('max_execution_time', 300);
+
+        // Iniciar el buffer de salida
+        ob_start();
+
         try {
             // Recoger datos del request
             $data = $request->only([
@@ -130,6 +137,7 @@ class ImcWebhookController extends Controller
 
             // Crear nuevo registro
             $newFormulario = Imc_Formulario::create($dataToLog);
+
             $encryptedId = Crypt::encryptString($newFormulario->id);
             $link = url('/pdf/download/imc_formulario') . '?id=' . urlencode($encryptedId);
 
@@ -144,34 +152,37 @@ class ImcWebhookController extends Controller
             ];
 
 
+            // Habilitar esta línea solo para pruebas
 
-
-
-            $pdf = PDF::loadView('pdf.imc_formulario', $dataToPDF);
-            $pdfContent = $pdf->output();
-
-
+            //$pdf = PDF::loadView('pdf.imc_formulario', $dataToPDF);
+            //$pdfContent = $pdf->output();
 
             // Preparar y enviar el correo electrónico
             $recipient = $data['Correo:'];
-            $subject = 'Calculadora IMC';
+            $subject = 'Respuesta Calculadora IMC';
             $view = 'emails.imc_formulario';
             $emailData = $dataToPDF;
             $attachments = [
-                ['content' => $pdfContent, 'name' => 'Respuesta_Calculadora_IMC.pdf']
+                // ['content' => $pdfContent, 'name' => 'Respuesta_Calculadora_IMC.pdf']
             ];
 
-            $fromName = 'Calculadora IMC'; // Dynamic value
-            $replyToName = 'Calculadora IMC';
+            $fromName = '+Bio Clinik';
+            $replyToName = '+Bio Clinik';
             $this->emailService->sendEmail($recipient, $subject, $view, $emailData, $attachments, 'noreply@bclinik.com', $fromName, 'noreply@bclinik.com', $replyToName);
 
+            // Limpiar el buffer de salida
+            ob_end_clean();
 
-            //return response()->json(['status' => 'success']);
+            return response()->json(['status' => 'success'], 200);
         } catch (\Exception $e) {
+            // Limpiar el buffer de salida en caso de error
+            ob_end_clean();
+
             Log::error('Error al procesar datos del webhook: ' . $e->getMessage());
             return response()->json(['status' => 'error', 'message' => 'Error al procesar los datos del webhook'], 500);
         }
     }
+
     public function handleImcInvitacion(Request $request)
         {
             try {
@@ -212,7 +223,7 @@ class ImcWebhookController extends Controller
                 $link = url('/pdf/download/imc_invitado') . '?id=' . urlencode($encryptedId);
 
                 // Format the date for the email
-                $fechaFormateada = now()->format('d/m/Y');
+                $fechaFormateada = now()->format('d-m-Y');
 
                 // Prepare email data for the Blade view
                 $emailData = [
@@ -227,23 +238,24 @@ class ImcWebhookController extends Controller
                 ];
 
                 // Generate PDF content
-                $pdf = PDF::loadView('pdf.imc_invitacion', $emailData);
-                $pdfContent = $pdf->output();
+                /* $pdf = PDF::loadView('pdf.imc_invitacion', $emailData);
+                $pdfContent = $pdf->output(); */
 
                 // Prepare and send the email
                 $recipient = $email_referido;
                 $subject = 'Invitación Calculadora IMC';
                 $view = 'emails.imc_invitacion';
                 $attachments = [
-                    ['content' => $pdfContent, 'name' => 'Invitacion_Calculadora_IMC.pdf']
+                  //  ['content' => $pdfContent, 'name' => 'Invitacion_Calculadora_IMC.pdf']
                 ];
 
-                $fromName = 'Invitación Calculadora IMC'; // Dynamic value
-                $replyToName = 'Invitación Calculadora IMC'; // Dynamic value
+                $fromName = '+Bio Clinik'; // Dynamic value
+                $replyToName = '+Bio Clinik'; // Dynamic value
 
                 $this->emailService->sendEmail($recipient, $subject, $view, $emailData, $attachments, 'noreply@bclinik.com', $fromName, 'noreply@bclinik.com', $replyToName);
 
-               //  return response()->json(['status' => 'success']);
+                return response()->json(['status' => 'success'], 200);
+
             } catch (\Exception $e) {
                 // Log the error and return an error response
                 Log::error('Error al procesar datos del webhook: ' . $e->getMessage());

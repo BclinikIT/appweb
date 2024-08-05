@@ -53,12 +53,8 @@ Route::middleware([
 Route::prefix('webhook')->group(function () {
     Route::post('/imc_formulario', [ImcWebhookController::class, 'handle']);
     Route::post('/imc_invitacion', [ImcWebhookController::class, 'handleImcInvitacion']);
-
     Route::post('/cribado_encuesta', [CribadoEncuestaWebhookController::class, 'handleCribadoEncuesta']);
-    Route::get('/cribado_encuesta_download', [CribadoEncuestaWebhookController::class, 'pdf']);
-
     Route::post('/cribado_cotizacion', [CribadoWebhookController::class, 'handleCribadoCotizacion']);
-    Route::get('/cribado_cotizacion_download', [CribadoEncuestaWebhookController::class, 'pdf']);
 });
 
 
@@ -67,6 +63,11 @@ Route::prefix('pdf/download')->group(function()
 {
     Route::get('/imc_formulario', [ImcWebhookController::class, 'pdf']);
     Route::get('/imc_invitado', [ImcWebhookController::class, 'pdf_imc_invitado']);
+
+    Route::get('/cribado_cotizacion', [CribadoWebhookController::class, 'pdf']);
+
+    Route::get('/cribado_encuesta', [CribadoEncuestaWebhookController::class, 'pdf']);
+
 
 
 

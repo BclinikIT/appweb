@@ -484,14 +484,7 @@ margin-left: 47px !important;
                                                                                             <ul>
                                                                                                 <li style="color: #333333">
                                                                                                     <p style="color: #333333">
-                                                                                                        <a target="_blank" style="text-decoration: none; color: #333333" href="https://www.google.com/search?q=bio+clinik+muxbal">
-                                                                                                    <stron>	Edificio Corporativo Muxbal &nbsp;- CAES</stron></a
-                                                                                                        >
-                                                                                                    </p>
-                                                                                                </li>
-                                                                                                <li style="color: #333333">
-                                                                                                    <p style="color: #333333">
-                                                                                                        <a target="_blank" style="text-decoration: none; color: #333333" 	href="https://www.google.com/search?q=bio+clinik+zona+10">
+                                                                                                        <a target="_blank" style="text-decoration: none; color: #333333" 	href="https://www.google.com/search?q=%2BBio+Clinik+Estaci%C3%B3n+Metab%C3%B3lica+01010&rlz=1C1ALOY_esGT1034GT1034&oq=%2BBio+Clinik+Estaci%C3%B3n+Metab%C3%B3lica+01010&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBBzgyOWowajmoAgCwAgE&sourceid=chrome&ie=UTF-8">
 
                                                                                                                 <stron>Edificio 01010 - Zona 10</stron></a
                                                                                                         >

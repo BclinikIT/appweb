@@ -2,6 +2,18 @@
 export default {
   props: {
     datos: Array
+  },
+  methods: {
+    formatDate(dateString) {
+      const date = new Date(dateString);
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses empiezan desde 0
+      const year = date.getFullYear();
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+      return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+    }
   }
 }
 </script>
@@ -15,7 +27,7 @@ export default {
                     <div class="py-8">
                         <!-- Campo de búsqueda -->
                         <div class="flex flex-row mb-1 sm:mb-0 justify-between w-full">
-                            <h2 class="text-2xl leading-tight">Lista Invitación</h2>
+                            <h2 class="text-2xl leading-tight">Lista </h2>
                             <div class="flex">
                                 <div class="relative right-0">
                                     <input type="text"
@@ -61,14 +73,6 @@ export default {
                                             </th>
                                             <th
                                                 class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                                Nombre Invitado
-                                            </th>
-                                            <th
-                                                class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                                Apellido Invitado
-                                            </th>
-                                            <th
-                                                class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                                 Correo
                                             </th>
                                             <th
@@ -77,12 +81,9 @@ export default {
                                             </th>
                                             <th
                                                 class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                                fecha
+                                                Fecha y Hora
                                             </th>
-                                            <th
-                                                class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                                hora
-                                            </th>
+                                            
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -91,12 +92,9 @@ export default {
                                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.id }}</td>
                                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.nombre }}</td>
                                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.apellido }}</td>
-                                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.nombre_invitado }}</td>
-                                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.apellido_invitado }}</td>
                                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.correo }}</td>
                                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.telefono }}</td>
-                                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.fecha }}</td>
-                                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.hora }}</td>
+                                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ formatDate(dato.created_at) }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -128,6 +126,7 @@ export default {
     </AppLayout>
 </template>
 <script setup>
+
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { defineProps, ref, computed, onMounted } from 'vue';
 import * as XLSX from 'xlsx';
@@ -178,24 +177,21 @@ const datosPaginados = computed(() => {
 });
 
 const exportData = () => {
-    const headers = ['Id', 'Nombre', 'Apellido', 'Nombre Invitado', 'Apellido Invitado', 'Correo', 'Telefono', 'Fecha', 'Hora'];
+    const headers = ['Id', 'Nombre', 'Apellido', 'Correo', 'Telefono', 'Fecha y Hora'];
     const rows = datosFiltrados.value.map(dato => [
         dato.id,
         dato.nombre,
         dato.apellido,
-        dato.nombre_invitado,
-        dato.apellido_invitado,
         dato.correo,
         dato.telefono,
-        dato.fecha,
-        dato.hora
+        dato.created_at,
     ]);
 
     const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Datos Filtrados");
 
-    XLSX.writeFile(workbook, "datos_invitdos_imc.xlsx");
+    XLSX.writeFile(workbook, "metabograma.xlsx");
 };
 
 onMounted(() => {

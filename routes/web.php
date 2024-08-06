@@ -12,6 +12,10 @@ use App\Http\Controllers\{
     CribadoController,
     CribadoEncuestaWebhookController,
     EncuestaCribadoController,
+    LaboratorioController,
+    LaboratorioWebhookController,
+    MetabogramasController,
+    MetabogramasWebhookController,
 };
 
 // Home Route
@@ -42,12 +46,17 @@ Route::middleware([
         '/cribado-form-cotizacion' => CribadoController::class,
         '/encuesta' => EncuestaCribadoController::class,
         '/users' => UserController::class,
+        '/laboratorio' => LaboratorioController::class,
     ]);
 
-    // User Routes
+    Route::resource('/metabograma', MetabogramasController::class)->except(['show']);
+    Route::get('/metabograma/pro', [MetabogramasController::class, 'view_pro'])->name('metabograma.pro'); // name funciona para definiel el nombre de la ruta
+    Route::get('/metabograma/plus', [MetabogramasController::class, 'view_plus'])->name('metabograma.plus');
+
     Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
 });
+
 
 // Webhook Routes
 Route::prefix('webhook')->group(function () {
@@ -55,6 +64,12 @@ Route::prefix('webhook')->group(function () {
     Route::post('/imc_invitacion', [ImcWebhookController::class, 'handleImcInvitacion']);
     Route::post('/cribado_encuesta', [CribadoEncuestaWebhookController::class, 'handleCribadoEncuesta']);
     Route::post('/cribado_cotizacion', [CribadoWebhookController::class, 'handleCribadoCotizacion']);
+    Route::get('/cribado_cotizacion_download', [CribadoEncuestaWebhookController::class, 'pdf']);
+
+    Route::post('/metabogramas', [MetabogramasWebhookController::class, 'handleMetabogramas']);
+    Route::post('/laboratorio', [LaboratorioWebhookController::class, 'handleLaboratorio']);
+
+
 });
 
 

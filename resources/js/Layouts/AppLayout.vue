@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { defineProps, ref } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import ApplicationMark from '@/Components/ApplicationMark.vue';
 import Banner from '@/Components/Banner.vue';
@@ -7,6 +7,8 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+
+
 
 defineProps({
     title: String,
@@ -62,24 +64,22 @@ const logout = () => {
                                                 <button v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
                                                     <img class="h-8 w-8 rounded-full object-cover" :src="$page.props.auth.user.profile_photo_url" :alt="$page.props.auth.user.name">
                                                 </button>
-
                                                 <span v-else class="inline-flex rounded-md">
                                                     <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition ease-in-out duration-150">
-                                                        Formulario IMC
+                                                        IMC
                                                         <svg class="ms-2 -me-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                                                         </svg>
                                                     </button>
                                                 </span>
                                             </template>
-
                                             <template #content>
                                                 <DropdownLink :href="route('imc-formulario.index')" :active="route().current('imc-formulario.*')">
-                                                    Formulario
+                                                    Formulario Calculadora
                                                 </DropdownLink>
                                                 <div class="border-t border-gray-200" />
                                                 <DropdownLink :href="route('imc-formulario-invitados.index')" :active="route().current('imc-formulario-invitados.*')">
-                                                    Invitado
+                                                    Formulario Invitación
                                                 </DropdownLink>
                                             </template>
                                         </Dropdown>
@@ -107,11 +107,11 @@ const logout = () => {
 
                                             <template #content>
                                                 <DropdownLink :href="route('cribado-form-cotizacion.index')" :active="route().current('cribado-form-cotizacion.*')">
-                                                    Cotizacion
+                                                    Formulario Cotización
                                                 </DropdownLink>
 
-                                                <DropdownLink :href="route('encuesta.index')" :active="route().current('cribado-form-cotizacion.*')">
-                                                    Datos
+                                                <DropdownLink :href="route('encuesta.index')" :active="route().current('encuesta.*')">
+                                                    Formulario Encuesta
                                                 </DropdownLink>
 
                                             </template>
@@ -122,8 +122,56 @@ const logout = () => {
                                 </div>
                             </div>
 
+                            <div class="hidden space-x-8 sm:-my-px  sm:flex">
+                                <div class="hidden sm:flex sm:items-center sm:ms-6">
+                                    <!-- Settings Dropdown -->
+                                    <div class="relative">
+                                        <Dropdown align="right" width="48">
+                                            <template #trigger>
+                                                <span class="inline-flex rounded-md" >
+                                                    <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition ease-in-out duration-150">
+                                                        Metabograma
+                                                        <svg class="ms-2 -me-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                                        </svg>
+                                                    </button>
+                                                </span>
+                                            </template>
+                                            <template #content>
+                                                <DropdownLink :href="route('metabograma.index')" :active="route().current('metabograma.*')">
+                                                    Formulario Metabograma Básico
+                                                </DropdownLink>
+                                                <DropdownLink :href="route('metabograma.plus')" :active="route().current('metabograma.*')">
+                                                    Formulario Metabograma Plus
+                                                </DropdownLink>
+                                                <DropdownLink :href="route('metabograma.pro')" :active="route().current('metabograma.*')">
+                                                    Formulario Metabograma Pro
+                                                </DropdownLink>
+                                            </template>
+                                        </Dropdown>
+                                    </div>
+                                </div>
+                            </div>
 
+                            <!-- Navigation Links -->
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('laboratorio.index')" :active="route().current('laboratorio.*')">
+                                    Formulario Experiencia
+                                </NavLink>
+                            </div>
 
+                              <!-- Navigation Links -->
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                                    Formulario Artículos
+                                </NavLink>
+                            </div>
+
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                                    Formulario Sugerencias
+                                </NavLink>
+                            </div>
 
                         </div>
 

@@ -43,7 +43,7 @@ class CribadoEncuestaWebhookController extends Controller
 
 
         $pdf = PDF::loadView('pdf.cribado_encuesta', $dataToPDF);
-        return $pdf->download('Resultado de la Encuesta de Cribado.pdf');
+        return $pdf->download('Resultado Encuesta Cribado.pdf');
 
 
     }
@@ -185,7 +185,7 @@ class CribadoEncuestaWebhookController extends Controller
             ];
             $recipient = $correo;
 
-            $subject = 'Resultado de la Encuesta de Cribado';
+            $subject = 'Resultado Encuesta Cribado';
             $view = 'emails.cribado_encuesta';
             $emailData = $DataToEmail;
             $attachments = [

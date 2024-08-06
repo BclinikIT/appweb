@@ -92,12 +92,7 @@ class ImcWebhookController extends Controller
     }
     public function handle(Request $request)
     {
-        // Aumentar límites de memoria y tiempo de ejecución
-        ini_set('memory_limit', '256M');
-        ini_set('max_execution_time', 300);
 
-        // Iniciar el buffer de salida
-        ob_start();
 
         try {
             // Recoger datos del request
@@ -170,15 +165,10 @@ class ImcWebhookController extends Controller
             $replyToName = '+Bio Clinik';
             $this->emailService->sendEmail($recipient, $subject, $view, $emailData, $attachments, 'noreply@bclinik.com', $fromName, 'noreply@bclinik.com', $replyToName);
 
-            // Limpiar el buffer de salida
-            ob_end_clean();
-
             return response()->json(['status' => 'success'], 200);
         } catch (\Exception $e) {
-            // Limpiar el buffer de salida en caso de error
-            ob_end_clean();
 
-            Log::error('Error al procesar datos del webhook: ' . $e->getMessage());
+
             return response()->json(['status' => 'error', 'message' => 'Error al procesar los datos del webhook'], 500);
         }
     }

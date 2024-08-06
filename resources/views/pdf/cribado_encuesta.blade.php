@@ -101,7 +101,7 @@
         </p>
         <p style="text-align: left;">Gracias por confiarnos tus datos:</p>
         <p style="text-align: left;">Tu <span style="color: #002545;">IMC</span> es de {{ $imc }} que
-            corresponde a la categoria {{ $categoria }}</p>
+            corresponde a la categoria {{ $categoria }}.</p>
         <div class="centered-content">
             <img src="https://appweb.bclinik.com/img/img_correos/semaforo.png" alt="semaforo" style="width: 130px" />
             <div class="text-content">
@@ -110,13 +110,22 @@
                 </p>
 
 
-                @if ($sumatoria <= 5)
-                    <h3 style="color: red;font-size: 2em;font-weight: bold;">Alto</h3>
-                @elseif ($sumatoria >= 6 && $sumatoria <= 10)
-                    <h3 style="color: #d7d436;font-size: 2em;font-weight: bold;">Medio</h3>
-                @else
+
+
+
+                @if ($imc < 25)
                     <h3 style="color: #76b82a;font-size: 2em;font-weight: bold;">Bajo</h3>
+                @elseif ($imc >= 25 && $imc <= 29)
+                    <h3 style="color: #d7d436;font-size: 2em;font-weight: bold;">Medio</h3>
+                @elseif ($imc >= 30 && $imc <= 39)
+                    <h3 style="color: red;font-size: 2em;font-weight: bold;">Alto</h3>
+                @else
+                    <h3 style="color: red;font-size: 2em;font-weight: bold;">Muy Alto</h3>
                 @endif
+
+
+
+
 
 
 
@@ -157,23 +166,7 @@
             <div class="text-content">
 
 
-                @if ($imc < 25)
-                    <p style="color: #76b82a;font-size: 2em;font-weight: bold;">Bajo</p>
-                    <p class="text-center" style="color: #002545;">
-                        ¡Tienes un Estilo de Vida Saludable!
-                    </p>
-                    <p>
-                        Tienes el metabolismo acelerado
-                    </p>
-                @elseif ($imc >= 25 && $imc <= 29)
-                    <p style="color: #d7d436;font-size: 2em;font-weight: bold;">Medio</p>
-                    <p class="text-center" style="color: #002545;">
-                        ¡Tu Estilo de Vida puede mejorar!
-                    </p>
-                    <p>
-                        Tienes el metabolismo irregular
-                    </p>
-                @elseif ($imc >= 30 && $imc <= 39)
+                @if ($sumatoria <= 5)
                     <p style="color: red;font-size: 2em;font-weight: bold;">Alto</p>
                     <p class="text-center" style="color: #002545;">
                         ¡Debes cambiar tu Estilo de Vida!
@@ -181,15 +174,25 @@
                     <p>
                         Tienes el metabolismo lento
                     </p>
-                @else
-                    <p style="color: red;font-size: 2em;font-weight: bold;">Muy Alto</p>
+                @elseif ($sumatoria >= 6 && $sumatoria <= 10)
+                    <p style="color: #d7d436;font-size: 2em;font-weight: bold;">Medio</p>
                     <p class="text-center" style="color: #002545;">
-                        ¡Debes cambiar tu Estilo de Vida!
+                        ¡Tu Estilo de Vida puede mejorar!
                     </p>
                     <p>
-                        Tienes el metabolismo lento
+                        Tienes el metabolismo irregular
+                    </p>
+                @else
+                    <p style="color: #76b82a;font-size: 2em;font-weight: bold;">Bajo</p>
+                    <p class="text-center" style="color: #002545;">
+                        ¡Tienes un Estilo de Vida Saludable!
+                    </p>
+                    <p>
+                        Tienes el metabolismo acelerado
                     </p>
                 @endif
+
+
 
 
 
@@ -247,16 +250,19 @@
     <div class="container">
         <p style="margin-bottom: 10px;">
             <img style="width: 30px;" src="https://appweb.bclinik.com/img/img_correos/whatsapp.png" alt="whatsapp" />
-            <strong>Whatsapp: <a style="color: #333333;   text-decoration: none;" href="https://wa.link/d8atu5"
-                    target="_blank">4785-8946</a></strong>
+            <strong>Whatsapp: <a style="color: #333333;   text-decoration: none;" href="https://wa.link/9jb7ih"
+                    target="_blank">3324-3501</a></strong>
         </p>
 
         <p><strong>Ubícanos en:</strong></p>
         <ul>
-            <li style="color: #333333;">
-                <a target="_blank" style="text-decoration: none; color: #333333;"
-                    href="https://www.google.com/search?q=bio+clinik+zona+10"> <strong>Edificio 01010 - Zona
-                        10</strong></a>
+            <li style="color: #333333">
+                <p style="color: #333333">
+                    <a target="_blank" style="text-decoration: none; color: #333333" 	href="https://www.google.com/search?q=%2BBio+Clinik+Estaci%C3%B3n+Metab%C3%B3lica+01010&rlz=1C1ALOY_esGT1034GT1034&oq=%2BBio+Clinik+Estaci%C3%B3n+Metab%C3%B3lica+01010&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBBzgyOWowajmoAgCwAgE&sourceid=chrome&ie=UTF-8">
+
+                            <stron>Edificio 01010 - Zona 10</stron></a
+                    >
+                </p>
             </li>
         </ul>
         <img src="https://appweb.bclinik.com/img/img_correos/footer.png" alt="footer" />

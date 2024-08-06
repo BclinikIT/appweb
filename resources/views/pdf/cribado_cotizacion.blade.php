@@ -185,7 +185,7 @@
                                         <div>
                                             <p style="margin-bottom: 10px;">
                                                 <img style="width: 30px;" src="https://appweb.bclinik.com/img/img_correos/whatsapp.png" alt="whatsapp" />
-                                                <strong>Whatsapp: <a style="color: #333333;   text-decoration: none;" href="https://wa.link/wcqioe" target="_blank">4785-8946</a></strong>
+                                                <strong>Whatsapp: <a style="color: #333333;   text-decoration: none;" href="https://wa.link/wcqioe" target="_blank">3324-3501</a></strong>
                                             </p>
                                             <p style="margin-bottom: 10px;">
                                                 <img style="width: 30px;" src="https://appweb.bclinik.com/img/img_correos/email.png" alt="email" />

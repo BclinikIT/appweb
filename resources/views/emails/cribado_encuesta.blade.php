@@ -1003,8 +1003,8 @@
                                                                             <tbody>
                                                                                 <tr>
                                                                                     <td align="left" class="esd-block-text">
-                                                                                        <p>Fecha: '.date('d-m-Y').' <br></p>
-                                                                                        <p style="line-height: 150% !important; color: #002545" align="right"><a href="' . $link . '" style="display: inline-block; padding: 1px 15px; margin-left: 10px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">Descargar</a></p>
+                                                                                        <p>Fecha: {{$date}} <br></p>
+                                                                                        <p style="line-height: 150% !important; color: #002545" align="right"><a href="{{$link}}" style="display: inline-block; padding: 1px 15px; margin-left: 10px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">Descargar</a></p>
                                                                                     </td>
 
                                                                                 </tr>
@@ -1039,9 +1039,9 @@
                                                                             <tbody>
                                                                                 <tr>
                                                                                     <td align="left" class="esd-block-text">
-                                                                                        <p>Hola '.$nombre.' '.$apellido.'</p>
+                                                                                        <p>Hola {{$nombre}} {{$apellido}}</p>
                                                                                         <p>Gracias por confiarnos tus datos: <br type="_moz"></p>
-                                                                                        <p>Tu <b>IMC </b> es de '.$result.' que corresponde a la categoría '.$categoria.' <br type="_moz"></p>
+                                                                                        <p>Tu <b>IMC </b> es de {{$imc}} que corresponde a la categoría {{$categoria}}. <br type="_moz"></p>
                                                                                     </td>
                                                                                 </tr>
                                                                             </tbody>
@@ -1094,11 +1094,26 @@
                                                                                         <p style="color: #333333;"><br></p>
                                                                                         <p style="color: #333333;"><br></p>
                                                                                         <p style="color: #333333;">Por lo que el nivel de riesgo de desarrollar Síndrome Metabólico es: </p>
-                                                                                        <p style="color: #333333;">'.$nivel.'</p>
 
-                                                                                        <p style="color: red;font-size: 2em;font-weight: bold;">Alto</p>
-                                                                                        <p style="color: #d7d436;font-size: 2em;font-weight: bold;">Medio</p>
-                                                                                        <p style="color: #76b82a;font-size: 2em;font-weight: bold;">Bajo</p>
+
+
+
+
+                                                                                        @if($imc < 25)
+                                                                                        <p style="color: #76b82a; font-size: 2em; font-weight: bold;">Bajo</p>
+
+                                                                                    @elseif($imc >= 25 && $imc <= 29)
+                                                                                    <p style="color: #d7d436; font-size: 2em; font-weight: bold;">Medio</p>
+
+                                                                                    @elseif($imc >= 30 && $imc <= 39)
+                                                                                    <p style="color: red; font-size: 2em; font-weight: bold;">Alto</p>
+
+                                                                                    @else
+                                                                                    <p style="color: red; font-size: 2em; font-weight: bold;">Muy Alto</p>
+
+                                                                                    @endif
+
+
 
                                                                                         <p style="text-align: center; color: #0e2841;"><i>El índice de masa corporal es la relación de tu peso con tu estatura. </i></p>
                                                                                         <p style="text-align: center; color: #0e2841;"><i>Es el indicador más confiable para saber si tienes sobrepeso o ya estás en obesidad. &nbsp;&nbsp; </i></p>
@@ -1387,21 +1402,21 @@
                                                                                         <p style="color:#333333"><br></p>
 
 
-                                                                                        <p style="color: #76b82a;font-size: 2em;font-weight: bold;">Bajo</p>
-                                                                                        <p>&nbsp;¡Tienes un Estilo de Vida Saludable!</p>
-                                                                                        <p>&nbsp;Tienes el metabolismo acelerado<br type="_moz"></p>
-
-                                                                                        <p style="color: #d7d436;font-size: 2em;font-weight: bold;">Medio<br type="_moz"></p>
-                                                                                        <p>¡Tu Estilo de Vida puede mejorar!<br type="_moz"></p>
-                                                                                        <p>Tienes el metabolismo irregular<br type="_moz"></p>
-
-                                                                                        <p style="color: red;font-size: 2em;font-weight: bold;">Alto&nbsp; &nbsp; &nbsp;<br type="_moz"></p>
+                                                                                        @if ($sumatoria <= 5)
+                                                                                        <p style="color: red; font-size: 2em; font-weight: bold;">Alto&nbsp; &nbsp; &nbsp;<br type="_moz"></p>
                                                                                         <p>¡Debes cambiar tu Estilo de Vida!<br type="_moz"></p>
                                                                                         <p>Tienes el metabolismo lento<br type="_moz"></p>
 
-                                                                                        <p style="color: red;font-size: 2em;font-weight: bold;">Muy Alto&nbsp; &nbsp; &nbsp;<br type="_moz"></p>
-                                                                                        <p>¡Debes cambiar tu Estilo de Vida!<br type="_moz"></p>
-                                                                                        <p>Tienes el metabolismo lento<br type="_moz"></p>
+                                                                                            @elseif ($sumatoria >= 6 && $sumatoria <= 10)
+                                                                                            <p style="color: #d7d436; font-size: 2em; font-weight: bold;">Medio<br type="_moz"></p>
+                                                                                            <p>¡Tu Estilo de Vida puede mejorar!<br type="_moz"></p>
+                                                                                            <p>Tienes el metabolismo irregular<br type="_moz"></p>
+                                                                                            @else
+                                                                                            <p style="color: #76b82a; font-size: 2em; font-weight: bold;">Bajo<br type="_moz"></p>
+                                                                                            <p> ¡Tienes un Estilo de Vida Saludable!<br type="_moz"></p>
+                                                                                            <p> Tienes el metabolismo acelerado<br type="_moz"></p>
+                                                                                            @endif
+
 
 
                                                                                     </td>
@@ -1522,10 +1537,10 @@
                                                                                     <td align="left" class="esd-block-text">
                                                                                         <p style="color: #333333; "><br></p>
                                                                                         <p style="color: #333333; "><br></p>
-                                                                                        <p style="line-height: 200%;">Por antecedentes familiares la posibilidad es '.$antecedentesPorcentaje.'% </p>
-                                                                                        <p style="line-height: 200%;">Por factores de riesgo propios la posibilidad es '.$factoresPorcentaje.'% </p>
-                                                                                        <p style="line-height: 200%;">Por factores hereditarios la posibilidad es '.$hereditariosPorcentaje.'% </p>
-                                                                                        <p style="line-height: 200%;"><b>La posibilidad total de desarrollar prediabetes es </b><b>'.$porcentajePromedioFinal.'% </b></p>
+                                                                                        <p style="line-height: 200%;">Por antecedentes familiares la posibilidad es {{$antecedentesPorcentaje}}% </p>
+                                                                                        <p style="line-height: 200%;">Por factores de riesgo propios la posibilidad es {{$factoresPorcentaje}}% </p>
+                                                                                        <p style="line-height: 200%;">Por factores hereditarios la posibilidad es {{$hereditariosPorcentaje}}% </p>
+                                                                                        <p style="line-height: 200%;"><b>La posibilidad total de desarrollar prediabetes es </b><b>{{$porcentajePromedioFinal}}% </b></p>
                                                                                     </td>
                                                                                 </tr>
                                                                             </tbody>
@@ -1644,7 +1659,7 @@
                                                                                 <tr>
                                                                                     <td align="center" class="esd-block-image" style="font-size: 0px;"><a target="_blank"><img class="adapt-img" src="https://appweb.bclinik.com/img/img_correos/whatsapp.png" alt style="display: block;" width="40"></a></td>
                                                                                     <td align="left" class="esd-block-text">
-                                                                                        <p><b>Whatsapp: </b><a href="https://wa.link/d8atu5"><b> 3324-3501 </b></a><br type="_moz"></p>
+                                                                                        <p><b>Whatsapp: </b><a href="https://wa.link/9jb7ih"><b> 3324-3501 </b></a><br type="_moz"></p>
                                                                                     </td>
                                                                                 </tr>
                                                                             </tbody>
@@ -1710,7 +1725,17 @@
                                                                             <tbody>
                                                                                 <tr>
                                                                                     <td align="left" class="esd-block-text">
-                                                                                        <p>⮚&nbsp;&nbsp;&nbsp;&nbsp; <a target="_blank" style="text-decoration: none; color: #333333;" href="https://www.google.com/search?q=bio+clinik+zona+10"><b>Edificio 01010 - Zona 10&nbsp;&nbsp;&nbsp;&nbsp; </b></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                                                                                        <ul>
+                                                                                            <li style="color: #333333">
+                                                                                                <p style="color: #333333">
+                                                                                                    <a target="_blank" style="text-decoration: none; color: #333333" 	href="https://www.google.com/search?q=%2BBio+Clinik+Estaci%C3%B3n+Metab%C3%B3lica+01010&rlz=1C1ALOY_esGT1034GT1034&oq=%2BBio+Clinik+Estaci%C3%B3n+Metab%C3%B3lica+01010&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBBzgyOWowajmoAgCwAgE&sourceid=chrome&ie=UTF-8">
+
+                                                                                                            <stron>Edificio 01010 - Zona 10</stron></a
+                                                                                                    >
+                                                                                                </p>
+                                                                                            </li>
+                                                                                        </ul>
+
                                                                                     </td>
                                                                                 </tr>
                                                                             </tbody>

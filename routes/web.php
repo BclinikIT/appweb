@@ -65,7 +65,6 @@ Route::prefix('pdf/download')->group(function()
     Route::get('/imc_invitado', [ImcWebhookController::class, 'pdf_imc_invitado']);
 
     Route::get('/cribado_cotizacion', [CribadoWebhookController::class, 'pdf']);
-
     Route::get('/cribado_encuesta', [CribadoEncuestaWebhookController::class, 'pdf']);
 
 

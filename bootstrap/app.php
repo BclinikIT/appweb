@@ -23,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'webhook/cribado_cotizacion',
             'webhook/cribado_encuesta',
             'webhook/metabogramas',
+            'webhook/laboratorio',
 
 
         ]);

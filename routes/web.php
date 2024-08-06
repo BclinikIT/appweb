@@ -12,6 +12,8 @@ use App\Http\Controllers\{
     CribadoController,
     CribadoEncuestaWebhookController,
     EncuestaCribadoController,
+    LaboratorioController,
+    LaboratorioWebhookController,
     MetabogramasController,
     MetabogramasWebhookController,
 };
@@ -44,11 +46,10 @@ Route::middleware([
         '/cribado-form-cotizacion' => CribadoController::class,
         '/encuesta' => EncuestaCribadoController::class,
         '/users' => UserController::class,
-
+        '/laboratorio' => LaboratorioController::class,
     ]);
 
     Route::resource('/metabograma', MetabogramasController::class)->except(['show']);
-    
     Route::get('/metabograma/pro', [MetabogramasController::class, 'view_pro'])->name('metabograma.pro'); // name funciona para definiel el nombre de la ruta
     Route::get('/metabograma/plus', [MetabogramasController::class, 'view_plus'])->name('metabograma.plus');
 
@@ -69,6 +70,8 @@ Route::prefix('webhook')->group(function () {
     Route::get('/cribado_cotizacion_download', [CribadoEncuestaWebhookController::class, 'pdf']);
 
     Route::post('/metabogramas', [MetabogramasWebhookController::class, 'handleMetabogramas']);
+    Route::post('/laboratorio', [LaboratorioWebhookController::class, 'handleLaboratorio']);
+
 
 });
 

@@ -20,7 +20,7 @@ export default {
 
 
 <template>
-    <AppLayout title="Metabogramas">
+    <AppLayout title="Formulario Experiencia">
         <div class="container mx-auto px-4 sm:px-8">
             <div class="py-8">
                 <div class="container mx-auto px-4 sm:px-8">
@@ -65,11 +65,7 @@ export default {
                                             </th>
                                             <th
                                                 class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                                Nombre
-                                            </th>
-                                            <th
-                                                class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                                Apellido
+                                                Nombre completo
                                             </th>
                                             <th
                                                 class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
@@ -78,6 +74,10 @@ export default {
                                             <th
                                                 class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                                 Telefono
+                                            </th>
+                                            <th
+                                                class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                                Descripcion
                                             </th>
                                             <th
                                                 class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
@@ -91,9 +91,9 @@ export default {
                                         <tr v-for="dato in datosPaginados" :key="dato.id">
                                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.id }}</td>
                                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.nombre }}</td>
-                                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.apellido }}</td>
                                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.correo }}</td>
                                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.telefono }}</td>
+                                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.descripcion }}</td>
                                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ formatDate(dato.created_at) }}</td>
                                         </tr>
                                     </tbody>
@@ -165,7 +165,9 @@ const datosFiltrados = computed(() => {
     return props.datos.filter(dato =>
         dato.nombre.toLowerCase().includes(lowerCaseSearch) ||
         dato.apellido.toLowerCase().includes(lowerCaseSearch) ||
-        dato.correo.toLowerCase().includes(lowerCaseSearch)
+        dato.correo.toLowerCase().includes(lowerCaseSearch) ||
+        dato.descripcion.toLowerCase().includes(lowerCaseSearch) 
+
         // Añadir más campos según sea necesario
     );
 });
@@ -177,13 +179,13 @@ const datosPaginados = computed(() => {
 });
 
 const exportData = () => {
-    const headers = ['Id', 'Nombre', 'Apellido', 'Correo', 'Telefono', 'Fecha y Hora'];
+    const headers = ['Id', 'Nombre completo',  'Correo', 'Telefono', 'Descripcion', 'Fecha y Hora'];
     const rows = datosFiltrados.value.map(dato => [
         dato.id,
         dato.nombre,
-        dato.apellido,
         dato.correo,
         dato.telefono,
+        dato.descripcion,
         dato.created_at,
     ]);
 

@@ -7,7 +7,7 @@ export default {
 </script>
 <!--  -->
 <template>
-    <AppLayout title="Dashboard">
+    <AppLayout title="Encuesta Cribado">
         <div class="container mx-auto px-4 sm:px-8">
             <div class="py-8">
                 <!-- Campo de búsqueda y botón de exportación -->

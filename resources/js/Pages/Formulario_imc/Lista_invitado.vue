@@ -8,7 +8,7 @@ export default {
 
 
 <template>
-    <AppLayout title="Dashboard">
+    <AppLayout title="Lista Invitación">
         <div class="container mx-auto px-4 sm:px-8">
             <div class="py-8">
                 <div class="container mx-auto px-4 sm:px-8">

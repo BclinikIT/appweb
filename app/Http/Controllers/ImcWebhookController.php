@@ -4,59 +4,61 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\Services\EmailService;
 use App\Models\Imc_Formulario;
 use App\Models\Imc_Invitacion;
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-use PDF; // Asegúrate de importar la clase PDF
-use App\Models\FormularioImc;
 use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
+use PDF;
+use App\Models\FormularioImc;
+use App\Models\FormularioImcInvitados;
+
 
 class ImcWebhookController extends Controller
 {
+    protected $emailService;
+    public function __construct(EmailService $emailService)
+    {
+        $this->emailService = $emailService;
+    }
+
+    private function calculateImc($peso_en_libras, $altura_en_centimetros)
+    {
+        $peso_kg = $peso_en_libras / 2.20462;
+        $altura_m = $altura_en_centimetros / 100;
+        return round(($peso_kg / ($altura_m * $altura_m)), 2);
+    }
+
+
+    private function obtenerCategoriaIMC($imc)
+    {
+        if ($imc < 18.5) {
+            return "Infrapeso";
+        } elseif ($imc >= 18.5 && $imc < 25) {
+            return "Normal";
+        } elseif ($imc >= 25 && $imc < 30) {
+            return "Sobrepeso";
+        } elseif ($imc >= 30 && $imc < 40) {
+            return "Obesidad";
+        } else {
+            return "Obesidad mórbida";
+        }
+    }
+
+
     public function pdf(Request $request)
     {
-        $url_img = public_path('/img/img_correos/');
         $encryptedId = $request->query('id');
         $decryptedId = Crypt::decryptString($encryptedId);
+        $formulario = FormularioImc::findOrFail($decryptedId);
 
-        $user = FormularioImc::findOrFail($decryptedId);
-        $nombre = $user->nombre;
-        $apellido = $user->apellido;
-        $edad = $user->edad;
-        $genero = $user->genero;
-        $peso_en_libras = $user->peso_en_libras;
-        $altura_en_centimetros = $user->altura_en_cms;
-        $correo = $user->correo;
-        $telefono = $user->telefono;
-
-
-        $formName = '';
-        $form_id = $user->form_id;
-
-
-
-        $peso_r = ($peso_en_libras / 2.20462);
-        $talla = ($altura_en_centimetros / 100);
-        $tallas_r = ($talla * $talla);
-
-        $result = round((($peso_r / $tallas_r) * 10) / 10, 2);
-
-
-        $categoria = $user->categoria;
-        $fechaFormateada = Carbon::parse(date('Y-m-d'))->format('d/m/Y');
-
-        $dataToPDF= [
-            'date'=>date('d-m-Y'),
-            'nombre'=>$nombre,
-            'apellido'=>$apellido,
-            'imc'=>$result,
-            'categoria'=>$categoria,
+        $dataToPDF = [
+            'date' => date('d-m-Y'),
+            'nombre' => $formulario->nombre,
+            'apellido' => $formulario->apellido,
+            'imc' => $formulario->imc,
+            'categoria' => $formulario->categoria,
         ];
-
-
-
 
         $pdf = PDF::loadView('pdf.imc_formulario', $dataToPDF);
         return $pdf->download('Respuesta_Calculadora_IMC.pdf');
@@ -66,106 +68,104 @@ class ImcWebhookController extends Controller
     {
 
 
+        $encryptedId = $request->query('id');
+        $decryptedId = Crypt::decryptString($encryptedId);
+        $invitados = FormularioImcInvitados::findOrFail($decryptedId);
+
+        $dataToPDF = [
+            'date' => date('d-m-Y'),
+            'nombre' => $invitados->nombre,
+            'apellido' => $invitados->apellido,
+            'nombre_invitado' => $invitados->nombre_invitado,
+            'apellido_invitado' => $invitados->apellido_invitado,
+            'correo' => $invitados->correo,
+            'telefono' => $invitados->telefono,
+            'fecha' => $invitados->fecha,
+            'hora' => $invitados->hora,
+            'form_id' => $invitados->form_id,
+        ];
+
+        $pdf = PDF::loadView('pdf.imc_invitacion', $dataToPDF);
+        return $pdf->download('Invitacion IMC.pdf');
+
+
     }
-    
     public function handle(Request $request)
     {
+
+
         try {
-            $nombre = $request->input('Nombre:');
-            $apellido = $request->input('Apellido:');
-            $edad = $request->input('Edad:');
-            $genero = $request->input('Genero:');
-            $peso_en_libras = $request->input('Peso_en_libras:');
-            $altura_en_centimetros = $request->input('Altura_en_cms:');
-            $correo = $request->input('Correo:');
-            $telefono = $request->input('Telefono:');
+            // Recoger datos del request
+            $data = $request->only([
+                'Nombre:',
+                'Apellido:',
+                'Edad:',
+                'Genero:',
+                'Peso_en_libras:',
+                'Altura_en_cms:',
+                'Correo:',
+                'Telefono:',
+                'form_name',
+                'form_id'
+            ]);
 
+            // Calcular IMC y categoría
+            $result = $this->calculateImc($data['Peso_en_libras:'], $data['Altura_en_cms:']);
+            $categoria = $this->obtenerCategoriaIMC($result);
 
-            $formName = $request->input('form_name');
-            $form_id = $request->input('form_id');
-
-
-
-            $peso_r = ($peso_en_libras / 2.20462);
-            $talla = ($altura_en_centimetros / 100);
-            $tallas_r = ($talla * $talla);
-
-            $result = round((($peso_r / $tallas_r) * 10) / 10, 2);
-
-            function obtenerCategoriaIMC($imc)
-            {
-                if ($imc < 18.5) {
-                    return "Infrapeso";
-                } elseif ($imc >= 18.5 && $imc < 25) {
-                    return "Normal";
-                } elseif ($imc >= 25 && $imc < 30) {
-                    return "Sobrepeso";
-                } elseif ($imc >= 30 && $imc < 40) {
-                    return "Obesidad";
-                } elseif ($imc >= 40) {
-                    return "Obesidad mórbida";
-                } else {
-                    return "Valor IMC no válido";
-                }
-            }
-            $categoria = obtenerCategoriaIMC($result);
-
-            $fechaFormateada = Carbon::parse(date('Y-m-d'))->format('d/m/Y');
+            // Preparar datos para guardar
             $dataToLog = [
-                'nombre' => $nombre,
-                'apellido' => $apellido,
-                'edad' => $edad,
-                'genero' => $genero,
-                'peso_en_libras' => $peso_en_libras,
-                'altura_en_cms' => $altura_en_centimetros,
-                'correo' => $correo,
-                'telefono' => $telefono,
+                'nombre' => $data['Nombre:'],
+                'apellido' => $data['Apellido:'],
+                'edad' => $data['Edad:'],
+                'genero' => $data['Genero:'],
+                'peso_en_libras' => $data['Peso_en_libras:'],
+                'altura_en_cms' => $data['Altura_en_cms:'],
+                'correo' => $data['Correo:'],
+                'telefono' => $data['Telefono:'],
                 'categoria' => $categoria,
                 'imc' => $result,
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s'),
-                'form_id' => "0"
-
+                'fecha' => Carbon::now()->format('Y-m-d'),
+                'hora' => Carbon::now()->format('H:i:s'),
+                'form_id' => $data['form_id'] ?? "0"
             ];
 
             // Crear nuevo registro
             $newFormulario = Imc_Formulario::create($dataToLog);
+
             $encryptedId = Crypt::encryptString($newFormulario->id);
             $link = url('/pdf/download/imc_formulario') . '?id=' . urlencode($encryptedId);
 
-
-            $dataToPDF= [
-                'date'=>date('d-m-Y'),
-                'nombre'=>$nombre,
-                'apellido'=>$apellido,
-                'imc'=>$result,
-                'categoria'=>$categoria,
+            // Preparar datos para PDF
+            $dataToPDF = [
+                'date' => Carbon::now()->format('d-m-Y'),
+                'nombre' => $data['Nombre:'],
+                'apellido' => $data['Apellido:'],
+                'imc' => $result,
+                'categoria' => $categoria,
+                'link' => $link
             ];
 
 
+            // Habilitar esta línea solo para pruebas
 
-
-
-            $pdf = PDF::loadView('pdf.imc_formulario', $dataToPDF);
-            $pdfContent = $pdf->output();
-
-
+            //$pdf = PDF::loadView('pdf.imc_formulario', $dataToPDF);
+            //$pdfContent = $pdf->output();
 
             // Preparar y enviar el correo electrónico
             $recipient = $data['Correo:'];
-            $subject = 'Calculadora IMC';
+            $subject = 'Respuesta Calculadora IMC';
             $view = 'emails.imc_formulario';
             $emailData = $dataToPDF;
             $attachments = [
-                ['content' => $pdfContent, 'name' => 'Respuesta_Calculadora_IMC.pdf']
+                // ['content' => $pdfContent, 'name' => 'Respuesta_Calculadora_IMC.pdf']
             ];
 
-            $fromName = 'Calculadora IMC'; // Dynamic value
-            $replyToName = 'Calculadora IMC';
+            $fromName = '+Bio Clinik';
+            $replyToName = '+Bio Clinik';
             $this->emailService->sendEmail($recipient, $subject, $view, $emailData, $attachments, 'noreply@bclinik.com', $fromName, 'noreply@bclinik.com', $replyToName);
 
-
-            //return response()->json(['status' => 'success']);
+            return response()->json(['status' => 'success'], 200);
         } catch (\Exception $e) {
 
 
@@ -174,15 +174,23 @@ class ImcWebhookController extends Controller
     }
 
     public function handleImcInvitacion(Request $request)
-    {
-        try {
-            $data = $request->all();
+        {
+            try {
+                // Retrieve all necessary input data from the request
+                $data = $request->only([
+                    'Tu_Nombre',
+                    'Nombre_Referido',
+                    'Telefono_Referido',
+                    'Email_Referido',
+                    'form_id'
+                ]);
 
-            $nombre = $request->input('Tu_Nombre');
-            $nombre_invitado = $request->input('Nombre_Referido');
-            $telefono_referido = $request->input('Telefono_Referido');
-            $email_referido = $request->input('Email_Referido');
-            $form_id = $request->input('form_id');
+                // Extract individual variables for clarity
+                $nombre = $data['Tu_Nombre'];
+                $nombre_invitado = $data['Nombre_Referido'];
+                $telefono_referido = $data['Telefono_Referido'];
+                $email_referido = $data['Email_Referido'];
+                $form_id = $data['form_id'];
 
                 // Prepare data to save in the database
                 $dataToSave = [
@@ -205,7 +213,7 @@ class ImcWebhookController extends Controller
                 $link = url('/pdf/download/imc_invitado') . '?id=' . urlencode($encryptedId);
 
                 // Format the date for the email
-                $fechaFormateada = now()->format('d/m/Y');
+                $fechaFormateada = now()->format('d-m-Y');
 
                 // Prepare email data for the Blade view
                 $emailData = [
@@ -220,23 +228,24 @@ class ImcWebhookController extends Controller
                 ];
 
                 // Generate PDF content
-                $pdf = PDF::loadView('pdf.imc_invitacion', $emailData);
-                $pdfContent = $pdf->output();
+                /* $pdf = PDF::loadView('pdf.imc_invitacion', $emailData);
+                $pdfContent = $pdf->output(); */
 
                 // Prepare and send the email
                 $recipient = $email_referido;
                 $subject = 'Invitación Calculadora IMC';
                 $view = 'emails.imc_invitacion';
                 $attachments = [
-                    ['content' => $pdfContent, 'name' => 'Invitacion_Calculadora_IMC.pdf']
+                  //  ['content' => $pdfContent, 'name' => 'Invitacion_Calculadora_IMC.pdf']
                 ];
 
-                $fromName = 'Invitación Calculadora IMC'; // Dynamic value
-                $replyToName = 'Invitación Calculadora IMC'; // Dynamic value
+                $fromName = '+Bio Clinik'; // Dynamic value
+                $replyToName = '+Bio Clinik'; // Dynamic value
 
                 $this->emailService->sendEmail($recipient, $subject, $view, $emailData, $attachments, 'noreply@bclinik.com', $fromName, 'noreply@bclinik.com', $replyToName);
 
-               //  return response()->json(['status' => 'success']);
+                return response()->json(['status' => 'success'], 200);
+
             } catch (\Exception $e) {
                 // Log the error and return an error response
                 Log::error('Error al procesar datos del webhook: ' . $e->getMessage());

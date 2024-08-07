@@ -4,6 +4,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\{
+    BibliotecaController,
+    BibliotecaWebhookController,
     FormularioImcController,
     FormularioImcInvitadosController,
     ImcWebhookController,
@@ -47,6 +49,7 @@ Route::middleware([
         '/encuesta' => EncuestaCribadoController::class,
         '/users' => UserController::class,
         '/laboratorio' => LaboratorioController::class,
+        '/biblioteca' => BibliotecaController::class,
     ]);
 
     Route::resource('/metabograma', MetabogramasController::class)->except(['show']);
@@ -68,7 +71,7 @@ Route::prefix('webhook')->group(function () {
 
     Route::post('/metabogramas', [MetabogramasWebhookController::class, 'handleMetabogramas']);
     Route::post('/laboratorio', [LaboratorioWebhookController::class, 'handleLaboratorio']);
-
+    Route::post('/biblioteca', [BibliotecaWebhookController::class, 'handleBiblioteca']);
 
 });
 

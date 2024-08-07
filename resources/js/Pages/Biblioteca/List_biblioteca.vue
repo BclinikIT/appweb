@@ -4,6 +4,9 @@ export default {
     datos: Array
   },
   methods: {
+    getArchivoUrl(archivo) {
+        return `/storage/biblioteca/${archivo}`;
+    },
     formatDate(dateString) {
       const date = new Date(dateString);
       const day = String(date.getDate()).padStart(2, '0');
@@ -20,7 +23,7 @@ export default {
 
 
 <template>
-    <AppLayout title="Formulario Laboratorio">
+    <AppLayout title="Formulario Biblioteca">
         <div class="container mx-auto px-4 sm:px-8">
             <div class="py-8">
                 <div class="container mx-auto px-4 sm:px-8">
@@ -81,6 +84,10 @@ export default {
                                             </th>
                                             <th
                                                 class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                                Archivo
+                                            </th>
+                                            <th
+                                                class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                                 Fecha y Hora
                                             </th>
                                             
@@ -94,6 +101,9 @@ export default {
                                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.correo }}</td>
                                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.telefono }}</td>
                                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.descripcion }}</td>
+                                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                                <a :href="getArchivoUrl(dato.archivo)" target="_blank" class="text-blue-500 hover:underline">Ver/Descargar</a>
+                                            </td>
                                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ formatDate(dato.created_at) }}</td>
                                         </tr>
                                     </tbody>

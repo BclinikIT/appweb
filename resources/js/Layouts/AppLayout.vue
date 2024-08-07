@@ -194,7 +194,7 @@ const logout = () => {
                                                 </span>
                                             </template>
                                             <template #content>
-                                                <DropdownLink :href="route('laboratorio.index')" :active="route().current('laboratorio.*')">
+                                                <DropdownLink :href="route('biblioteca.index')" :active="route().current('biblioteca.*')">
                                                     Formulario Artículos
                                                 </DropdownLink>
                                             </template>

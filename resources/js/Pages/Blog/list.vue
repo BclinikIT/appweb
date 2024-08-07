@@ -1,3 +1,27 @@
+<script>
+export default {
+  props: {
+    datos: Array
+  },
+  methods: {
+    getArchivoUrl(archivo) {
+        return `/storage/blog/${archivo}`;
+    },
+    formatDate(dateString) {
+      const date = new Date(dateString);
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses empiezan desde 0
+      const year = date.getFullYear();
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+      return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+    }
+  }
+}
+</script>
+
+
 <template>
     <AppLayout title="Lista de Sugerencias">
         <div class="container mx-auto px-4 sm:px-8">
@@ -6,12 +30,12 @@
                     <div class="py-8">
                         <!-- Campo de búsqueda -->
                         <div class="flex flex-row mb-1 sm:mb-0 justify-between w-full">
-                            <h2 class="text-2xl leading-tight">Lista de Sugerencias</h2>
+                            <h2 class="text-2xl leading-tight">Lista </h2>
                             <div class="flex">
                                 <div class="relative right-0">
                                     <input type="text"
                                         class="rounded-l-lg border-t border-b border-l text-gray-800 border-gray-200 bg-white h-10 px-5 pr-16 rounded focus:outline-none w-full"
-                                        v-model="searchTerm" @input="handleSearch" placeholder="Buscar">
+                                        v-model="searchTerm" @input="handleSearch" placeholder="Search">
                                     <button class="absolute right-0 top-0 mt-2 mr-4">
                                         <svg class="text-gray-600 h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg"
                                             xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px"
@@ -64,6 +88,10 @@
                                             </th>
                                             <th
                                                 class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                                Fecha
+                                            </th>
+                                            <th
+                                                class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                                 Page URL
                                             </th>
                                             <th
@@ -88,18 +116,22 @@
                                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.telefono }}</td>
                                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.correo }}</td>
                                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.mensaje }}</td>
-                                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.archivo }}</td>
+                                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                                <a :href="getArchivoUrl(dato.archivo)" target="_blank" class="text-blue-500 hover:underline">Ver/Descargar</a>
+                                            </td>
+                                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ formatDate(dato.created_at) }}</td>
                                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.page_url }}</td>
                                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.user_agent }}</td>
                                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.remote_ip }}</td>
                                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ dato.powered_by }}</td>
+
                                         </tr>
                                     </tbody>
                                 </table>
                                 <!-- Controles de paginación -->
                                 <div class="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
                                     <span class="text-xs xs:text-sm text-gray-900">
-                                        Mostrando {{ (currentPage - 1) * pageSize + 1 }} a {{ Math.min(currentPage * pageSize, datos.length) }} de {{ datos.length }} entradas
+                                        Mostrando {{ (currentPage - 1) * pageSize + 1 }} a {{ Math.min(currentPage * pageSize, props.datos.length) }} de {{ props.datos.length }} entradas
                                     </span>
                                     <div class="inline-flex mt-2 xs:mt-0">
                                         <!-- Botones de página anterior y siguiente -->
@@ -123,15 +155,14 @@
         </div>
     </AppLayout>
 </template>
-
 <script setup>
+
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { defineProps, ref, computed, onMounted } from 'vue';
 import * as XLSX from 'xlsx';
-
 const props = defineProps(['datos']);
 
-const pageSize = 10;
+const pageSize = 10; // Tamaño de página ajustado
 const currentPage = ref(1);
 const searchTerm = ref('');
 
@@ -153,7 +184,7 @@ const nextPage = () => {
 };
 
 const handleSearch = () => {
-    currentPage.value = 1;
+    currentPage.value = 1; // Reiniciar a la primera página al buscar
 };
 
 const datosFiltrados = computed(() => {
@@ -178,7 +209,7 @@ const datosPaginados = computed(() => {
 
 const exportData = () => {
     const headers = ['Id', 'Nombre', 'Teléfono', 'Correo', 'Mensaje', 'Archivo', 'Page URL', 'User Agent', 'Remote IP', 'Powered By'];
-    const rows = datosFiltrados.value.map(dato => [
+    const rows = datosPaginados.value.map(dato => [
         dato.id,
         dato.nombre,
         dato.telefono,

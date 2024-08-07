@@ -219,7 +219,7 @@ const logout = () => {
                                                 </span>
                                             </template>
                                             <template #content>
-                                                <DropdownLink :href="route('laboratorio.index')" :active="route().current('laboratorio.*')">
+                                                <DropdownLink :href="route('blog-sugerencia.index')" :active="route().current('blog-sugerencia.*')">
                                                     Formulario Sugerencias
                                                 </DropdownLink>
                                             </template>

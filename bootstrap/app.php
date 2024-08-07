@@ -25,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'webhook/metabogramas',
             'webhook/laboratorio',
             'webhook/biblioteca',
+            'webhook/blog_sugerencias',
 
 
         ]);

@@ -18,6 +18,8 @@ use App\Http\Controllers\{
     LaboratorioWebhookController,
     MetabogramasController,
     MetabogramasWebhookController,
+    BlogSugerenciaController,
+    BlogSugerenciasWebhookController
 };
 
 // Home Route
@@ -50,6 +52,7 @@ Route::middleware([
         '/users' => UserController::class,
         '/laboratorio' => LaboratorioController::class,
         '/biblioteca' => BibliotecaController::class,
+        '/blog-sugerencia' => BlogSugerenciaController::class,
     ]);
 
     Route::resource('/metabograma', MetabogramasController::class)->except(['show']);
@@ -72,6 +75,7 @@ Route::prefix('webhook')->group(function () {
     Route::post('/metabogramas', [MetabogramasWebhookController::class, 'handleMetabogramas']);
     Route::post('/laboratorio', [LaboratorioWebhookController::class, 'handleLaboratorio']);
     Route::post('/biblioteca', [BibliotecaWebhookController::class, 'handleBiblioteca']);
+    Route::post('/blog_sugerencias', [BlogSugerenciasWebhookController::class, 'handleBlogSugerencias']);
 
 });
 
